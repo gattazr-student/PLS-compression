@@ -12,6 +12,7 @@ Structures de données :
 ### Arbre :
 - **char** valeur
 - **Arbre*** enfant
+- **Arbre*** frere
 - **Arbre*** parent
 - **Arbre**\*\*\* id
 
@@ -46,3 +47,9 @@ LZW
 │   └── main.c
 └── tests
 ```
+
+Convention de nommage :
+---------------------
+- Paramètre des fonctions : aX ``` int main(int aArgc, char** aArgv){} ```
+- Variable locale : wX ```char* wBuffer;```
+- Variable globale : XXX ```int LINELEN = 1024;```
