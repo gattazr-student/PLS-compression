@@ -7,7 +7,7 @@
 #                    VARIABLES
 #-------------------------------------------------
 CC=gcc
-CFLAGS=-g -Wall -pedantic -I../includes
+CFLAGS=-g -Wall -pedantic -I../include
 LDFLAGS=
 LIBRARIES=
 
@@ -28,8 +28,8 @@ $(EXEC_0): $(OBJS_0)
 #-------------------------------------------------
 #                   DEPENDENCIES
 #-------------------------------------------------
-main.o: main.c ../include/main.h
-binio.o: binio.c ../include/binio.h
+main.o: main.c
+binio.o: binio.c ../include/binio.h ../include/types.h
 compression.o: compression.c ../include/compression.h
 decompression.o: decompression.c ../include/decompression.h
 dictionnaire.o: dictionnaire.c ../include/dictionnaire.h
