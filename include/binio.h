@@ -8,6 +8,7 @@ typedef struct s_buffer {
 	char* content; /* Contenu du buffer*/
 	char* courant; /* Pointeur sur élément courant du buffer */
 	int significatif; /* nombre de bit de poids faibles de courant significatif */
+	int longeur; /* Longuer de content significative */
 } Buffer;
 
 
