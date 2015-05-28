@@ -7,8 +7,8 @@ Structures de données :
 ### Dictionnaire :
 - **int** nbElements : nombre d'élements dans le dictionnaire
 - **int** lastAlloc : dernier élément disponible dans le dictionnaire
-- **Abre**** ids : Tableau de pointeur sur Arbre
-- **Abre*** dico : Tableau d'arbres
+- **Arbre**** ids : Tableau de pointeur sur Arbre
+- **Arbre*** dico : Tableau d'arbres
 
 ### Arbre :
 - **char** valeur
