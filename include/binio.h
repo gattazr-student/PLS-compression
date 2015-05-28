@@ -1,3 +1,4 @@
+#include <types.h>
 #include <stdio.h>
 
 #define BUFFER_LENGTH 1024
@@ -19,7 +20,7 @@ typedef struct s_buffer {
  * @param aBuffers : buffers de lecture et d'écriture initialisé
  * @return structure FILE*
  */
-FILE* bOpen(char* aFileName, char* aFlags, Buffer* aBuffers);
+FILE* bOpen(char* aFileName, char* aFlags, Buffer** aBuffers);
 
 /**
  * bClose
@@ -28,6 +29,16 @@ FILE* bOpen(char* aFileName, char* aFlags, Buffer* aBuffers);
  * @param aBuffers : Tableau de buffers contanant le buffer de lecture et d'écriture du fichier
  */
 void bClose(FILE* aFile, Buffer* aBuffers);
+
+
+/**
+ * bfeof
+ * retourne 1 si la fin du fichier est atteinte et que le buffer de lecture est vide. 0 sinon.
+ * @param aFile : fichier
+ * @param aBuffer : buffer de lecture
+ * @return 1 si la fin du fichier est atteinte et que le buffer de lecture est vide. 0 sinon.
+ */
+int bfeof(FILE* aFile, Buffer* aBuffer);
 
 /**
  * bflush

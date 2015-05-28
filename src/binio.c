@@ -1,4 +1,3 @@
-#include <types.h>
 #include <binio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,21 +15,25 @@ int mask_fort(int aBits, char *aMask);
  * @param aBuffers : buffers de lecture et d'écriture initialisé
  * @return structure FILE*
  */
-FILE* bOpen(char* aFileName, char* aFlags, Buffer* aBuffers){
+FILE* bOpen(char* aFileName, char* aFlags, Buffer** aBuffers){
 	FILE* wFile;
-	wFile = fopen(aFileName, strcat(aFlags, "b"));
+	char wFlags[10];
+
+	strcpy(wFlags, aFlags);
+	strcat(wFlags, "b");
+	wFile = fopen(aFileName, aFlags);
 	if(wFile == NULL){
 		fprintf(stderr, "The specified file (%s) does not exist\n", aFileName);
 		exit(1);
 	}
 	/* Allocation des buffers */
-	aBuffers = malloc(sizeof(Buffer)*2);
-	aBuffers[0].content = calloc(BUFFER_LENGTH, sizeof(char)); /* Buffer de lecture */
-	aBuffers[0].courant = aBuffers[0].content;
-	aBuffers[0].significatif = 8;
-	aBuffers[1].content = calloc(BUFFER_LENGTH, sizeof(char)); /* Buffer d'écriture */
-	aBuffers[1].courant = aBuffers[1].content;
-	aBuffers[0].significatif = 0;
+	*aBuffers = malloc(sizeof(Buffer)*2);
+	(*aBuffers)[0].content = calloc(BUFFER_LENGTH, sizeof(char)); /* Buffer de lecture */
+	(*aBuffers)[0].courant = (*aBuffers)[0].content;
+	(*aBuffers)[0].significatif = 8;
+	(*aBuffers)[1].content = calloc(BUFFER_LENGTH, sizeof(char)); /* Buffer d'écriture */
+	(*aBuffers)[1].courant = (*aBuffers)[1].content;
+	(*aBuffers)[1].significatif = 0;
 	return wFile;
 }
 
@@ -105,6 +108,21 @@ void bFlush_force(FILE* aFile, Buffer* aBuffer){
 }
 
 /**
+ * bfeof
+ * retourne 1 si la fin du fichier est atteinte et que le buffer de lecture est vide. 0 sinon.
+ * @param aFile : fichier
+ * @param aBuffer : buffer de lecture
+ * @return 1 si la fin du fichier est atteinte et que le buffer de lecture est vide. 0 sinon.
+ */
+int bfeof(FILE* aFile, Buffer* aBuffer){
+	if(aFile != NULL && aBuffer != NULL){
+		if( (feof(aFile) != 0) && (*(aBuffer->courant) == '\0')){
+			return 1;
+		}
+	}
+	return 0;
+}
+/**
  * bRead
  * lit aBits bits du fichie aFile en mode binaire et retourne la valeur entière associée. aBits doit être inférieur à sizeof(Code)*8.
  * @param aFile : fichier à lire
@@ -120,6 +138,7 @@ Code bRead(FILE* aFile, int aBits, Buffer* aBuffer){
 	char wMask;
 	int wDisponible, wBitsLus;
 	int wRead;
+	int wI;
 
 	/* Calcul du nombre de bits disponible dans le buffer */
 	wDisponible = strlen(aBuffer->courant)*8 - (8 - aBuffer->significatif);
@@ -135,6 +154,10 @@ Code bRead(FILE* aFile, int aBits, Buffer* aBuffer){
 
 		/* Lit entre 0 et BUFFER_LENGTH octets */
 		wRead = fread(aBuffer->content, sizeof(char), BUFFER_LENGTH, aFile);
+		aBuffer->courant = aBuffer->content;
+		for(wI = wRead; wI < BUFFER_LENGTH; wI++){
+			aBuffer->content[wI] = '\0';
+		}
 
 		/* Calcul a nouveau du nombre de bits disponible dans le buffer */
 		wDisponible = strlen(aBuffer->courant)*8 - (8 - aBuffer->significatif);
