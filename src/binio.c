@@ -28,10 +28,10 @@ FILE* bOpen(char* aFileName, char* aFlags, Buffer** aBuffers){
 	}
 	/* Allocation des buffers */
 	*aBuffers = malloc(sizeof(Buffer)*2);
-	(*aBuffers)[0].content = calloc(BUFFER_LENGTH, sizeof(char)); /* Buffer de lecture */
+	(*aBuffers)[0].content = calloc(BUFFER_LENGTH + 1, sizeof(char)); /* Buffer de lecture */
 	(*aBuffers)[0].courant = (*aBuffers)[0].content;
 	(*aBuffers)[0].significatif = 8;
-	(*aBuffers)[1].content = calloc(BUFFER_LENGTH, sizeof(char)); /* Buffer d'écriture */
+	(*aBuffers)[1].content = calloc(BUFFER_LENGTH + 1, sizeof(char)); /* Buffer d'écriture */
 	(*aBuffers)[1].courant = (*aBuffers)[1].content;
 	(*aBuffers)[1].significatif = 0;
 	return wFile;
@@ -79,10 +79,10 @@ void bFlush(FILE* aFile, Buffer* aBuffer){
 				wLength = wLength - 1;
 				wLast =  *(aBuffer->courant); /* Sauvegarde le dernier octet */
 			}
-			fwrite(aBuffer->content, sizeof(char), wLength, aFile);
+			fwrite(aBuffer->content, sizeof(char), wLength + 1, aFile);
 
 			/* Réinitialise le buffer */
-			for(wI = 1; wI <wLength; wI++){
+			for(wI = 1; wI < wLength; wI++){
 				aBuffer->content[wI] = '\0';
 			}
 			aBuffer->content[0] = wLast;
@@ -143,10 +143,11 @@ Code bRead(FILE* aFile, int aBits, Buffer* aBuffer){
 	/* Calcul du nombre de bits disponible dans le buffer */
 	wDisponible = strlen(aBuffer->courant)*8 - (8 - aBuffer->significatif);
 
-	/* Le buffer ne contient pas sufisament de bits */
+	/* Le buffer ne contient pas sufisament de bits pour faire la lecture complète */
 	if(wDisponible < aBits){
 
-		/* Déplace le pointeur avec un offset de -strlen(aBuffer->courant) bytes */
+		/* Déplace le pointeur avec un offset de -strlen(aBuffer->courant) bytes pour relire le/les derniers
+		octets du buffer courant */
 		if(fseek(aFile, -strlen(aBuffer->courant), SEEK_CUR) != 0){
 			fprintf(stderr, "Error while reading the file\n");
 			exit(1);
@@ -155,7 +156,8 @@ Code bRead(FILE* aFile, int aBits, Buffer* aBuffer){
 		/* Lit entre 0 et BUFFER_LENGTH octets */
 		wRead = fread(aBuffer->content, sizeof(char), BUFFER_LENGTH, aFile);
 		aBuffer->courant = aBuffer->content;
-		for(wI = wRead; wI < BUFFER_LENGTH; wI++){
+		/* Affecte '\0' à tous les élements restants du buffer */
+		for(wI = wRead; wI < BUFFER_LENGTH+1; wI++){
 			aBuffer->content[wI] = '\0';
 		}
 
@@ -165,7 +167,7 @@ Code bRead(FILE* aFile, int aBits, Buffer* aBuffer){
 		/* Le buffer ne contient toujours pas sufisament de bits ou fin du fichier lus une deuxième fois */
 		if(wRead == 0 || wDisponible < aBits){
 			/* exit et retourne une erreur car fichier mal formé */
-			fprintf(stderr, "Unexpected EOF found\n");
+			fprintf(stderr, "Unexpected EOF reached\n");
 			exit(1);
 		}
 	}
@@ -222,13 +224,15 @@ Code bRead(FILE* aFile, int aBits, Buffer* aBuffer){
  * @param aBuffer : buffer d'écriture du fichier
  */
 void bWrite(FILE* aFile, int aBits, Code aCode, Buffer* aBuffer){
-	/* 1) Vérifier si il y a des bits libre dans le stream. */
-	/* 1') Si il n'y en a pas, bflush */
+	/* 1) Vérifier si il y a sufisamment de bits libre dans le buffer d'écriture pour y écrire aCode */
+	/* 1') Si il n'y en a pas sufisamnt, bflush le buffer */
+	/* 2) Ecrire la valeur aCode dans courant, avance courant si nécessaire */
 	char wMask;
 	Code wTemp;
 	int wBitsEcrits;
 	int wRest;
 
+	/* Vide le buffer si il n'est pas sufisament grand pour contenir le code */
 	if((BUFFER_LENGTH - strlen(aBuffer->content))*8 < aBits){
 		bFlush(aFile, aBuffer);
 	}
