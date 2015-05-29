@@ -6,7 +6,7 @@ Structures de données :
 
 ### Dictionnaire :
 - **int** nbElements : nombre d'élements dans le dictionnaire
-- **int** lastAlloc : dernier élément disponible dans le dictionnaire
+- **int** tailleDico : dernier élément du dictionnaire dans lequel on peut écrire 
 - **Arbre**** ids : Tableau de pointeur sur Arbre
 - **Arbre*** dico : Tableau d'arbres
 
@@ -15,7 +15,7 @@ Structures de données :
 - **Arbre*** enfant
 - **Arbre*** frere
 - **Arbre*** parent
-- **Arbre**\*\*\* id
+- **Arbre**\*\* id
 
 ### Code :
 - typedef uint16_t

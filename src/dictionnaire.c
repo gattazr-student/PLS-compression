@@ -34,7 +34,7 @@ void initialiser(){
 	}
 	printf("\n");
 	
-	dictionnaire->nbElements = 259;
+	dictionnaire->nbElements = 258;
 	dictionnaire->tailleDico = INI_TAB_SIZE;
 }
 
@@ -44,35 +44,44 @@ void initialiser(){
  * Insere le Code aMono préfixé par le code aPrefixe dans le dictionnaire
  * @param aPrefixe :
  * @param aMono :
- * @return Code de la nouvelle séquence
+ * @return Code de la nouvelle séquence ou -1 s'il s'agit d'un code spécial
  */
 Code inserer (Code aPrefixe, Code aMono){
 
 	Code *aCode = NULL;
-	Arbre * aKid = NULL;
+	Arbre * aParent = NULL;
 	Arbre * aNew = NULL;
 	Arbre ** aTmp = NULL;
 	int i = 0;
+													printf("		aNew : %p \n", aNew);
 	
 	/* Cas où le code de aPrefixe.aMono existe déjà -> on retourne le code existant */
 	if(existe_seq(aPrefixe, aMono, aCode) == 0){
 		printf("Insertion impossible, le code existe déjà\n");
 		return *aCode;
 	}
+	
+	if(existe_seq(aPrefixe, aMono, aCode) < 0){
+		printf("Insertion impossible : valeur spéciale\n");
+		return -1;
+	}
+	
+	aNew = (Arbre*) malloc(sizeof(Arbre));
 	/* Cas où le code de aPrefixe.aMono n'existe pas */
-	else {
-		aKid = dictionnaire->ids[aPrefixe-FIRST_AVAILABLE]->enfant;
+		if (aPrefixe < INI_TAB_SIZE){
+			aParent = &(dictionnaire->dico[aPrefixe]);
+		}else{
+						printf("		aParent : %p \n", dictionnaire->ids[aPrefixe-FIRST_AVAILABLE]);
+			aParent = dictionnaire->ids[aPrefixe-FIRST_AVAILABLE];
+						printf("		BLABLA 3.5\n");
+		}		
 
-		/* On va jusqu'au dernier frère */
-		while(aKid->frere != NULL){
-			aKid->frere = aKid->frere->frere;
-		}
-
-		dictionnaire->nbElements++;
+		i = ++dictionnaire->nbElements;
 		
 		/* Vérification taille du tableau -> si on dépasse, on double la taille de ids */
-		if(dictionnaire->nbElements > dictionnaire->tailleDico){
+		if((dictionnaire->nbElements-FIRST_AVAILABLE) > dictionnaire->tailleDico){
 			aTmp = realloc(dictionnaire->ids, dictionnaire->tailleDico*2);
+
 			if (aTmp != NULL){
 				dictionnaire->ids = aTmp;
 			}
@@ -81,21 +90,25 @@ Code inserer (Code aPrefixe, Code aMono){
 				exit(EXIT_FAILURE);
 			}
 		}	
-		
+
 		aNew->valeur = aMono;
-		aNew->parent = dictionnaire->ids[aPrefixe-FIRST_AVAILABLE];
-		aNew->frere = aKid;
-		aKid = aNew;
+						printf("		%d     %c \n", aMono, aNew->valeur);
+		aNew->frere = aParent->enfant;
+		aNew->parent = aParent;
+		aParent->enfant = aNew;
 		aNew->enfant = NULL;
+		/* Rajoute dans le tableau ids le nouveau noeud */
+		dictionnaire->ids[i-FIRST_AVAILABLE] = aNew;
+		aNew->id = &(dictionnaire->ids[i-FIRST_AVAILABLE]);
 		
-		i = dictionnaire->nbElements;
-		aNew->id = &(dictionnaire->ids[i]);
-		dictionnaire->ids[i] = aNew;
+		printf("		BLABLA 5\n");
+		printf("		BLABLA 6\n");
+		printf("		aNew->parent : %p \n", aNew->parent);
+		printf("		dictionnaire->ids[nbElements-FIRST_AVAILABLE] : %p \n", dictionnaire->ids[i-FIRST_AVAILABLE]);
+		printf("		aNew->id : %p \n", aNew->id);
+		printf("		dictionnaire->dico[aPrefixe].enfant : %p \n", dictionnaire->dico[aPrefixe].enfant);
 		
 		return i;
-	}
-
-
 }
 
 
@@ -106,36 +119,44 @@ Code inserer (Code aPrefixe, Code aMono){
  * @param aPrefixe : le code du préfixe de la séquence
  * @param aMono : le code du mono de la séquence
  * @param aCode : pointe sur le code aPrefixe.aMono s'il existe
- * @return 0 si le code existe. 1 sinon.
+ * @return 0 si le code existe. 1 sinon + valeurs spéciales (-1 si fin de contenu, -2 si incrémentation de la taille des codes, -3 si réinitialisation du dictionnaire).
  */
 int existe_seq (Code aPrefixe, Code aMono, Code *aCode){
 
 	Arbre* aKid = NULL;
 	Arbre ** aCodekid = NULL;
-	aKid = dictionnaire->ids[aPrefixe-FIRST_AVAILABLE]->enfant;
-	aCodekid = dictionnaire->ids[aPrefixe-FIRST_AVAILABLE]->enfant->id;
-
-	/* Cas où le code aPrefixe existe */
-	if(existe_code(aPrefixe) == 0){
-		if(aKid->valeur == aMono){
-			*aCode = aCodekid-dictionnaire->ids+FIRST_AVAILABLE;
-			return 0;
-		}
-		/* On regarde tous les frères */		
-		else {
-			while(aKid->frere != NULL){
-				if(aKid->frere->valeur == aMono){
-					*aCode = aCodekid-dictionnaire->ids+FIRST_AVAILABLE;
-					return 0;
-				} else {
-					aKid->frere = aKid->frere->frere;
-				}
-			}
-			return 1;		
-		}	
-	/* Cas où le code aPrefixe n'existe pas */	
-	} else {
+	
+	/* Cas où le préfixe n'existe pas */
+	if(existe_code(aPrefixe) == 1){
 		return 1;
+	}
+	
+	/* Vérif valeurs spéciales */
+	if(aPrefixe>=INI_TAB_SIZE && aPrefixe<FIRST_AVAILABLE){
+		return aPrefixe-FIRST_AVAILABLE;
+	}
+	
+	/* Si aPrefix est un mono -> on cherche dans dico */
+	if (aPrefixe < INI_TAB_SIZE){
+		aKid = dictionnaire->dico[aPrefixe].enfant;
+	}	
+
+	/* Si aPrefix est une séquence -> on cherche dans ids */
+	else {
+		printf("		aParent existe_seq : %p \n", dictionnaire->ids[aPrefixe-FIRST_AVAILABLE]);
+		aKid = dictionnaire->ids[aPrefixe-FIRST_AVAILABLE]->enfant;
+	}
+	
+	while(aKid != NULL && aKid->valeur != aMono){
+		aKid = aKid->frere;
+	}
+	
+	if(aKid == NULL){
+		return 1;
+	}else{
+		aCodekid = aKid->id;
+		*aCode = aCodekid-(dictionnaire->ids)+FIRST_AVAILABLE;
+		return 0;
 	}
 }
   
@@ -147,7 +168,7 @@ int existe_seq (Code aPrefixe, Code aMono, Code *aCode){
  */
 int existe_code (Code aCode){
 
-	if(aCode < (*dictionnaire).nbElements){
+	if(aCode <= (*dictionnaire).nbElements){
 		return 0;
 	} else {
 		return 1;
