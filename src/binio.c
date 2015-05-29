@@ -71,7 +71,7 @@ void bClose(FILE* aFile, Buffer* aBuffers){
  * @param aBuffer : buffer d'écriture
  */
 void bFlush(FILE* aFile, Buffer* aBuffer){
-	int wI, wLength, wTemp;
+	int wI, wLength;
 	char wLast = '\0';
 	if (aFile != NULL && aBuffer != NULL) {
 		if(aBuffer->content != NULL && aBuffer->longeur > 0){
@@ -116,13 +116,22 @@ void bFlush_force(FILE* aFile, Buffer* aBuffer){
  * retourne 1 si la fin du fichier est atteinte et que le buffer de lecture est vide. 0 sinon.
  * @param aFile : fichier
  * @param aBuffer : buffer de lecture
- * @return 1 si la fin du fichier est atteinte et que le buffer de lecture est vide. 0 sinon.
+ * @param aBits : nombre de bits que l'on souhaitera lire
+ * @return 1 si la fin du fichier est atteinte et que le buffer de lecture est vide ou contient du bourrage. 0 sinon.
  */
-int bfeof(FILE* aFile, Buffer* aBuffer){
+int bfeof(FILE* aFile, Buffer* aBuffer, int aBits){
+	/* Si moins de aBits restant dans buffer et feof atteint, tester les aBits restant dans aBuffer. Si = 0, alors bourrage */
+	int wRestant, wTraite;
+
+	wTraite = aBuffer->courant - aBuffer->content;
+
 	if(aFile != NULL && aBuffer != NULL){
 		/* Si fin du fichier et fin du buffer atteint */
-		if( (feof(aFile) != 0) && (aBuffer->courant-aBuffer->content == aBuffer->longeur)){
-			return 1;
+		if( feof(aFile) != 0) {
+			wRestant = aBuffer->longeur - wTraite;
+			if(wRestant*8 < aBits){
+				return 1;
+			}
 		}
 	}
 	return 0;
@@ -139,14 +148,15 @@ Code bRead(FILE* aFile, int aBits, Buffer* aBuffer){
 	/* 1) Vérifier si aBits disponile dans buffer */
 	/* 1') Si pas assez : réculer aFile du nombre de bits dans buffer et lire BUFFER_LENGTH bytes ou jusqu'a fin du fichier si pas autant de disponible */
 	/* 2) Construire la valeur que l'on veut lire (avancer courant si nécessaire) */
-	Code wResult, wTemp;
+	Code wResult;
+	unsigned char wTemp;
 	char wMask;
 	int wDisponible, wBitsLus;
 	int wRead, wRest;
 	int wI;
 
 	/* Calcul du nombre de bits disponible dans le buffer */
-	wDisponible = strlen(aBuffer->courant)*8 - (8 - aBuffer->significatif);
+	wDisponible = (aBuffer->longeur-(aBuffer->courant-aBuffer->content))*8 - (8 - aBuffer->significatif);
 
 	/* Le buffer ne contient pas sufisament de bits pour faire la lecture complète */
 	if(wDisponible < aBits){
@@ -181,8 +191,12 @@ Code bRead(FILE* aFile, int aBits, Buffer* aBuffer){
 	wBitsLus = 0;
 	wResult = 0;
 
-	/* Il y a des bits libre dans courant */
-	if(aBuffer->significatif > 0){
+	/* Il y a pas de bits libre dans courant */
+	if(aBuffer->significatif == 0){
+		aBuffer->courant++;
+		aBuffer->significatif = 8;
+	/* Si il y en a moins de 8 */
+	} else if(aBuffer->significatif < 8){
 		/* Le nombre de bits demandé est plus grand que ceux restant sur courant */
 		if(aBits > aBuffer->significatif){
 			mask_faible(aBuffer->significatif, &wMask);
@@ -191,10 +205,6 @@ Code bRead(FILE* aFile, int aBits, Buffer* aBuffer){
 			aBuffer->courant++; /* Fait avancer courant */
 			aBuffer->significatif = 8;
 		}
-	/* Sinon */
-	}else{
-		aBuffer->courant++;
-		aBuffer->significatif = 8;
 	}
 
 	while(wBitsLus + 8 <= aBits){
@@ -210,7 +220,7 @@ Code bRead(FILE* aFile, int aBits, Buffer* aBuffer){
 	if(wRest > 0){
 		mask_fort(wRest, &wMask);
 		wTemp = *(aBuffer->courant) & wMask;
-		wResult = wResult | wTemp >> (aBuffer->significatif - wRest);
+		wResult |= (wTemp >> (aBuffer->significatif - wRest));
 		aBuffer->significatif = aBuffer->significatif - wRest;
 	}
 
@@ -243,8 +253,13 @@ void bWrite(FILE* aFile, int aBits, Code aCode, Buffer* aBuffer){
 
 	wBitsEcrits = 0;
 
-	/* il y a de la place dans courant */
-	if(aBuffer->significatif > 0){
+	/* Il y a pas de bits libre dans courant */
+	if(aBuffer->significatif == 0){
+		aBuffer->courant++;
+		aBuffer->longeur++;
+		aBuffer->significatif = 8;
+	/* Si il y en a moins de 8 */
+	} else if(aBuffer->significatif < 8){
 		/* Il y a plus de bits à lire que de bits dans le courant*/
 		if(aBits > aBuffer->significatif){
 			wTemp = aCode >> (aBits - aBuffer->significatif);
@@ -254,10 +269,6 @@ void bWrite(FILE* aFile, int aBits, Code aCode, Buffer* aBuffer){
 			aBuffer->longeur++;
 			aBuffer->significatif = 8;
 		}
-	/* Sinon*/
-	}else{
-		aBuffer->courant++;
-		aBuffer->longeur++;
 	}
 
 	mask_faible(8, &wMask);

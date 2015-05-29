@@ -37,9 +37,10 @@ void bClose(FILE* aFile, Buffer* aBuffers);
  * retourne 1 si la fin du fichier est atteinte et que le buffer de lecture est vide. 0 sinon.
  * @param aFile : fichier
  * @param aBuffer : buffer de lecture
- * @return 1 si la fin du fichier est atteinte et que le buffer de lecture est vide. 0 sinon.
+ * @param aBits : nombre de bits que l'on souhaitera lire
+ * @return 1 si la fin du fichier est atteinte et que le buffer de lecture est vide ou contient du bourrage. 0 sinon.
  */
-int bfeof(FILE* aFile, Buffer* aBuffer);
+int bfeof(FILE* aFile, Buffer* aBuffer, int aBits);
 
 /**
  * bflush
