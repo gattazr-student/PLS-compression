@@ -12,31 +12,26 @@ Dict * dictionnaire = NULL;
 void initialiser(){
 
 	int i = 0;
-	
+
 	dictionnaire = malloc(sizeof(Dict));
 	dictionnaire->ids = (Arbre**) calloc(256, sizeof(Arbre*));
 	if (dictionnaire->ids == NULL){
 		perror("Ids initialisation failed (calloc)\n");
 		exit(EXIT_FAILURE);
 	}
-	
+
 	dictionnaire->dico = (Arbre*) malloc(256*sizeof(Arbre));
 	if (dictionnaire->dico == NULL){
 		perror("Dico initialisation failed (malloc)\n");
 		exit(EXIT_FAILURE);
 	}
-	
+
 	for(i=0; i<256; i++){
 		dictionnaire->dico[i].valeur = i;
 		dictionnaire->dico[i].code = i;
 	}
-	
-	for(i=0; i<256; i++){
-		printf("%c ", (*dictionnaire).dico[i].valeur);
-	}
-	printf("\n");
-	
-	dictionnaire->nbElements = 258;
+
+	dictionnaire->nbElements = FIRST_AVAILABLE-1;
 	dictionnaire->tailleDico = INI_TAB_SIZE;
 }
 
@@ -50,37 +45,29 @@ void initialiser(){
  */
 Code inserer (Code aPrefixe, Code aMono){
 
-	Code *aCode = NULL;
+	Code aCode;
 	Arbre * aParent = NULL;
 	Arbre * aNew = NULL;
 	Arbre ** aTmp = NULL;
 	int i = 0;
-	
+	int wExist;
+
 	/* Cas où le code de aPrefixe.aMono existe déjà -> on retourne le code existant */
-	if(existe_seq(aPrefixe, aMono, aCode) == 0){
-		printf("Insertion impossible, le code existe déjà\n");
-		return *aCode;
+	wExist = existe_seq(aPrefixe, aMono, &aCode);
+	if(wExist == 0){
+		fprintf(stderr, "Insertion impossible, le code existe déjà\n");
+		return aCode;
 	}
-	
-	if(existe_seq(aPrefixe, aMono, aCode) < 0){
-		printf("Insertion impossible : valeur spéciale\n");
+
+	if(wExist < 0){
+		fprintf(stderr, "Insertion impossible : valeur spéciale\n");
 		return -1;
 	}
-	
-	aNew = (Arbre*) malloc(sizeof(Arbre));
-	
-	/* Cas où le code de aPrefixe.aMono n'existe pas */
-	if (aPrefixe < INI_TAB_SIZE){
-		aParent = &(dictionnaire->dico[aPrefixe]);
-	} else {
-		aParent = dictionnaire->ids[aPrefixe-FIRST_AVAILABLE];
-	}		
 
-	i = ++dictionnaire->nbElements;
-	
 	/* Vérification taille du tableau -> si on dépasse, on double la taille de ids */
-	if((dictionnaire->nbElements-FIRST_AVAILABLE) > dictionnaire->tailleDico){
-		aTmp = realloc(dictionnaire->ids, dictionnaire->tailleDico*2);
+	if((dictionnaire->nbElements-(FIRST_AVAILABLE-1)) == dictionnaire->tailleDico){
+		aTmp = realloc(dictionnaire->ids, dictionnaire->tailleDico*2*sizeof(Arbre*));
+		dictionnaire->tailleDico = dictionnaire->tailleDico * 2;
 
 		if (aTmp != NULL){
 			dictionnaire->ids = aTmp;
@@ -89,7 +76,23 @@ Code inserer (Code aPrefixe, Code aMono){
 			perror("Reallocation failed\n");
 			exit(EXIT_FAILURE);
 		}
-	}	
+	}
+
+	aNew = (Arbre*) malloc(sizeof(Arbre));
+	if (aNew == NULL){
+		perror("Malloc failed\n");
+		exit(EXIT_FAILURE);
+	}
+
+	/* Cas où le code de aPrefixe.aMono n'existe pas */
+	if (aPrefixe < INI_TAB_SIZE){
+		aParent = &(dictionnaire->dico[aPrefixe]);
+	} else {
+		int wId = aPrefixe-FIRST_AVAILABLE;
+		aParent = dictionnaire->ids[wId];
+	}
+
+	i = ++dictionnaire->nbElements;
 
 	aNew->valeur = aMono;
 	aNew->frere = aParent->enfant;
@@ -98,40 +101,31 @@ Code inserer (Code aPrefixe, Code aMono){
 	aNew->enfant = NULL;
 	/* Rajoute dans le tableau ids le nouveau noeud */
 	dictionnaire->ids[i-FIRST_AVAILABLE] = aNew;
-	aNew->id = &(dictionnaire->ids[i-FIRST_AVAILABLE]);
-	
-	/*printf("		BLABLA 5\n");
-	printf("		BLABLA 6\n");
-	printf("		aNew->parent : %p \n", aNew->parent);
-	printf("		dictionnaire->ids[nbElements-FIRST_AVAILABLE] : %p \n", dictionnaire->ids[i-FIRST_AVAILABLE]);
-	printf("		aNew->id : %p \n", aNew->id);
-	printf("		dictionnaire->dico[aPrefixe].enfant : %p \n", dictionnaire->dico[aPrefixe].enfant);*/
-	
 	aNew->code = i;
+
 	return i;
 }
 
 /**
  * inverserChaine
- * Retourne la chaine de caractère aSrc inversée
- * @param aSrc : la chaîne de caractères à inverser
- * @return la chaine de caractère wDest correspondant à la chaîne aSrc inversée
+ * Inverse la chaine de caractère passé en paramètre.
+ * @param aString : la chaîne de caractères à inverser
+ * @param aLength : taille de la chaine
  */
-char * inverserChaine (char * aSrc){
-	char * wDest = NULL;
-	int i;
-	int j = 0;
-	
-	i = strlen(aSrc)-1;
-	wDest = (char*)malloc((i+1)*sizeof(char));
-	
-	while(i>=0){
-		wDest[j] = aSrc[i];
-		j++;
-		i--;
+void inverserChaine (char *aString, int aLength){
+	int wI, wMid;
+	char wTemp;
+
+	wI = 0;
+	wMid = aLength / 2;
+
+	/* Inversion de la chaine */
+	while(wI < wMid){
+		wTemp = aString[wI];
+		aString[wI] = aString[aLength-wI];
+		aString[aLength-wI] = wTemp;
+		wI++;
 	}
-	
-	return wDest;
 }
 
 
@@ -216,33 +210,33 @@ char* codeVersSequence (Code aCode){
 int existe_seq (Code aPrefixe, Code aMono, Code *aCode){
 
 	Arbre* aKid = NULL;
-	Arbre ** aCodekid = NULL;
-	
+	*aCode = 0;
+
 	/* Cas où le préfixe n'existe pas : la séquence ne peut pas exister */
 	if(existe_code(aPrefixe) == 1){
 		return 1;
 	}
-	
+
 	/* Vérif valeurs spéciales */
 	if(aPrefixe>=INI_TAB_SIZE && aPrefixe<FIRST_AVAILABLE){
 		return aPrefixe-FIRST_AVAILABLE;
 	}
-	
+
 	/* Si aPrefix est un mono -> on cherche dans dico */
 	if (aPrefixe < INI_TAB_SIZE){
 		aKid = dictionnaire->dico[aPrefixe].enfant;
-	}	
+	}
 
 	/* Si aPrefix est une séquence -> on cherche dans ids */
 	else {
 		aKid = dictionnaire->ids[aPrefixe-FIRST_AVAILABLE]->enfant;
 	}
-	
+
 	/* On parcourt les frères */
 	while(aKid != NULL && aKid->valeur != aMono){
 		aKid = aKid->frere;
 	}
-	
+
 	/* Si aKid est null : on a parcouru tous les frères, sinon on a trouvé un frère dont la valeur est égale à aMono */
 	if(aKid == NULL){
 		return 1;
@@ -251,7 +245,7 @@ int existe_seq (Code aPrefixe, Code aMono, Code *aCode){
 		return 0;
 	}
 }
-  
+
 /**
  * existe_code
  * retourne 0 ou 1 signifiant si le Code aCode existe.
@@ -267,4 +261,3 @@ int existe_code (Code aCode){
 	}
 
 }
-
