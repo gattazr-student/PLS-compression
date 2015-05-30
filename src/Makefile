@@ -9,7 +9,7 @@
 CC=gcc
 CFLAGS=-g -Wall -pedantic -I../include
 LDFLAGS=
-LIBRARIES=
+LIBRARIES= -lm
 
 SRCS_0=main.c binio.c compression.c decompression.c dictionnaire.c
 OBJS_0=${SRCS_0:.c=.o}
