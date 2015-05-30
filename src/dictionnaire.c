@@ -28,6 +28,7 @@ void initialiser(){
 	
 	for(i=0; i<256; i++){
 		dictionnaire->dico[i].valeur = i;
+		dictionnaire->dico[i].code = i;
 	}
 	
 	for(i=0; i<256; i++){
@@ -106,6 +107,7 @@ Code inserer (Code aPrefixe, Code aMono){
 	printf("		aNew->id : %p \n", aNew->id);
 	printf("		dictionnaire->dico[aPrefixe].enfant : %p \n", dictionnaire->dico[aPrefixe].enfant);*/
 	
+	aNew->code = i;
 	return i;
 }
 
@@ -241,8 +243,7 @@ int existe_seq (Code aPrefixe, Code aMono, Code *aCode){
 	if(aKid == NULL){
 		return 1;
 	}else{
-		aCodekid = aKid->id;
-		*aCode = aCodekid-(dictionnaire->ids)+FIRST_AVAILABLE;
+		*aCode = aKid->code;
 		return 0;
 	}
 }

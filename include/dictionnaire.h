@@ -14,7 +14,7 @@ struct _arbre {
 	Arbre* enfant;
 	Arbre* frere;
 	Arbre* parent;
-	Arbre** id;
+	Code code;
 };
 
 struct _dict {
