@@ -150,54 +150,58 @@ char* codeVersSequence (Code aCode){
 	Arbre * wDernier = NULL;
 	char wCourant;
 	int wLg = 1;
-	
+	int wSize;
+
 	/* Cas où le code à rechercher n'existe pas */
 	if (existe_code(aCode) == 1){
-		printf("Erreur codeVersSequence : le code n'existe pas\n");
+		fprintf(stderr, "Erreur codeVersSequence : le code n'existe pas\n");
 		return NULL;
 	}
-	
+
 	/* Si aCode = 256-7-8 (valeur spéciale) */
-	if (aCode>255 && aCode<259){
-		printf("Erreur codeVersSequence : valeur spéciale !\n");
+	if (aCode>=INI_TAB_SIZE && aCode<FIRST_AVAILABLE){
+		fprintf(stderr, "Erreur codeVersSequence : valeur spéciale !\n");
 		return NULL;
 	}
-	
-	printf("	- codeVersSequence : wLg (longueur chaine) = %d\n", wLg);
-	wSequence = (char*)malloc(sizeof(char));
-	
+
+	wSize = 100;
+	wSequence = (char*)malloc(sizeof(char)*wSize);
+
 	/* Si aCode < 256, le code se trouve dans dico */
 	if (aCode < INI_TAB_SIZE){
 		*wSequence = aCode;
 		return wSequence;
 	}
-	
+
 	/* Sinon : aCode >= 258. On récupère le code depuis ids en commençant par le dernier élément de la séquence */
 	wDernier = dictionnaire->ids[aCode-FIRST_AVAILABLE];
 	wCourant = wDernier->valeur;
-	*wSequence = wCourant;
-	printf("	codeVersSequence : wCourant = %c\n", wCourant);
+	wSequence[0] = wCourant;
+
 	/* On remonte l'arbre jusqu'en haut */
 	while(wDernier->parent != NULL){
 		wDernier = wDernier->parent;
+		if(wLg > wSize){
+			wSize = wSize*2;
+			wTmp = realloc(wSequence, wSize);
+
+			if (wTmp != NULL){
+				wSequence = wTmp;
+			}
+			else {
+				perror("codeVersSequence : reallocation failed\n");
+				exit(EXIT_FAILURE);
+			}
+
+		}
+		wSequence[wLg] = wDernier->valeur;
 		wLg++;
-		printf("	- codeVersSequence : wLg (longueur chaine) = %d\n", wLg);
-		wTmp = realloc(wSequence, wLg);
-		if (wTmp != NULL){
-			wSequence = wTmp;
-		}
-		else {
-			perror("codeVersSequence : reallocation failed\n");
-			exit(EXIT_FAILURE);
-		}
-		wSequence[wLg-1] = wDernier->valeur;
-		printf("	codeVersSequence : wCourant = %c\n", wSequence[wLg-1]);
 	}
-	
+
 	wSequence[wLg] = '\0';
 	/* On inverse la chaine */
-	wSequence = inverserChaine(wSequence);
-		
+	inverserChaine(wSequence, wLg-1);
+
 	return wSequence;
 }
 

@@ -42,11 +42,11 @@ Code inserer (Code aPrefixe, Code aMono);
 
 /**
  * inverserChaine
- * Retourne la chaine de caractère aSrc inversée
+ * Inverse la chaine de caractère passé en paramètre.
  * @param aSrc : la chaîne de caractères à inverser
- * @return la chaine de caractère wDest correspondant à la chaîne aSrc inversée
+ * @param aLength : taille de la chaine
  */
-char * inverserChaine (char * aSrc);
+void inverserChaine (char *aSrc, int aLength);
 
 /**
  * codeVersSequence
