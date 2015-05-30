@@ -43,6 +43,8 @@ Code inserer (Code aPrefixe, Code aMono);
 /**
  * codeVersSequence
  * Retourne la chaine de caractère lié au code passé en paramètre
+ * la string a retourner doit avoir été malloc
+ * remonter l'arbre en insérerant en queue et retourner la chaine de caractères à la fin
  * @param aCode :
  * @return
  */
