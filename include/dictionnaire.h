@@ -41,6 +41,14 @@ void initialiser();
 Code inserer (Code aPrefixe, Code aMono);
 
 /**
+ * inverserChaine
+ * Retourne la chaine de caractère aSrc inversée
+ * @param aSrc : la chaîne de caractères à inverser
+ * @return la chaine de caractère wDest correspondant à la chaîne aSrc inversée
+ */
+char * inverserChaine (char * aSrc);
+
+/**
  * codeVersSequence
  * Retourne la chaine de caractère lié au code passé en paramètre
  * la string a retourner doit avoir été malloc
