@@ -3,6 +3,7 @@
 #include <binio.h>
 #include <getopt.h>
 #include <decompression.h>
+#include <compression.h>
 
 
 void printHelp(FILE* aFileOut);
@@ -83,7 +84,7 @@ int main(int aArgc, char** aArgv){
 		wBufferOut = bMakeBuffer();
 		if(wFunction == 1){
 			/* compression en cours */
-			fprintf(stderr, "compression en cours\n");
+			compression_LZW(wFileIn, wBufferIn, wFileOut, wBufferOut);
 		}else if(wFunction == 2){
 			/* décompression */
 			decompression_LZW(wFileIn, wBufferIn, wFileOut, wBufferOut);
