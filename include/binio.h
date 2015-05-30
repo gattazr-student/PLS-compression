@@ -18,19 +18,31 @@ typedef struct s_buffer {
  * Deux buffers sont initialisés, un pour la lecture et un pour l'écriture dans le fichier.
  * @param aFileName : fichier à ouvrir
  * @param aFlags : flags d'ouvertures
- * @param aBuffers : buffers de lecture et d'écriture initialisé
  * @return structure FILE*
  */
-FILE* bOpen(char* aFileName, char* aFlags, Buffer** aBuffers);
+FILE* bOpen(char* aFileName, char* aFlags);
+
+/**
+ * bMakeBuffer
+ * Créé un buffer qui peut être utilisé pour les fonction de lecture ou d'écriture
+ * @return structure Buffer*
+ */
+Buffer* bMakeBuffer();
 
 /**
  * bClose
  * Ecriture de tout le contenu du buffer d'écriture passé en paramètre dans le fichier puis fermeture de ce fichier
  * @param aFile : fichier ouvert en mode binaire à utiliser
- * @param aBuffers : Tableau de buffers contanant le buffer de lecture et d'écriture du fichier
+ * @param aBuffer : Buffer d'écriture
  */
 void bClose(FILE* aFile, Buffer* aBuffers);
 
+/**
+ * bCloseBuffer
+ * Ferme un Buffer en libérant la mémoire qui lui a été alloué
+ * @param aBuffer : Buffer a fermer
+ */
+void bCloseBuffer(Buffer *aBuffer);
 
 /**
  * bfeof

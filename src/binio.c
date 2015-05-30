@@ -13,52 +13,60 @@ int mask_fort(int aBits, char *aMask);
  * @param aFileName : fichier à ouvrir
  * @param aFlags : flags d'ouvertures
  * @param aBuffers : buffers de lecture et d'écriture initialisé
- * @return structure FILE*
+ * @return structure FILE*. NULL est retourné si le fichier n'a pas pu être ouvert.
  */
-FILE* bOpen(char* aFileName, char* aFlags, Buffer** aBuffers){
+FILE* bOpen(char* aFileName, char* aFlags){
 	FILE* wFile;
 	char wFlags[10];
 
 	strcpy(wFlags, aFlags);
 	strcat(wFlags, "b");
 	wFile = fopen(aFileName, aFlags);
-	if(wFile == NULL){
-		fprintf(stderr, "The specified file (%s) does not exist\n", aFileName);
-		exit(1);
-	}
-	/* Allocation des buffers */
-	*aBuffers = malloc(sizeof(Buffer)*2);
-	(*aBuffers)[0].content = calloc(BUFFER_LENGTH + 1, sizeof(char)); /* Buffer de lecture */
-	(*aBuffers)[0].courant = (*aBuffers)[0].content;
-	(*aBuffers)[0].significatif = 8;
-	(*aBuffers)[0].longeur = 0;
-	(*aBuffers)[1].content = calloc(BUFFER_LENGTH + 1, sizeof(char)); /* Buffer d'écriture */
-	(*aBuffers)[1].courant = (*aBuffers)[1].content;
-	(*aBuffers)[1].significatif = 8;
-	(*aBuffers)[1].longeur = 0;
+
 	return wFile;
 }
 
 /**
- * bClose
- * Ecriture de tout le contenu du buffer d'écriture passé en paramètre dans le fichier puis fermeture de ce fichier
- * @param aFile : fichier ouvert en mode binaire à utiliser
- * @param aBuffers : Tableau de buffers contanant le buffer de lecture et d'écriture du fichier
+ * bMakeBuffer
+ * Créé un buffer qui peut être utilisé pour les fonction de lecture ou d'écriture
+ * @return structure Buffer*
  */
-void bClose(FILE* aFile, Buffer* aBuffers){
-	if(aBuffers != NULL){
-		/* Destruction du buffer de lecture */
-		free(aBuffers[0].content);
-		/* Ecrit le contenu du buffer d'écriture dans le fichier */
-		bFlush_force(aFile, &(aBuffers[1]));
-		/* Destruction du buffer d'écriture */
-		free(aBuffers[1].content);
-		free(aBuffers);
+Buffer* bMakeBuffer(){
+	Buffer* wBuffer;
+	wBuffer = malloc(sizeof(Buffer));
+	wBuffer->content = calloc(BUFFER_LENGTH + 1, sizeof(char)); /* Buffer de lecture */
+	wBuffer->courant = wBuffer->content;
+	wBuffer->significatif = 8;
+	wBuffer->longeur = 0;
+	return wBuffer;
+}
+
+
+/**
+ * bClose
+ * Fermeture du fichier aFile avec écriture du buffer passé en paramètre si non NULL.
+ * @param aFile : fichier ouvert en mode binaire à utiliser
+ * @param aBuffer : Buffer d'écriture
+ */
+void bClose(FILE* aFile, Buffer* aBuffer){
+	if(aBuffer != NULL){
+		/* Vide le buffer dans le fichier */
+		bFlush_force(aFile, aBuffer);
 	}
 
 	if(aFile != NULL){
 		fclose(aFile);
 	}
+}
+
+/**
+ * bCloseBuffer
+ * Ferme un Buffer en libérant la mémoire qui lui a été alloué
+ * @param aBuffer : Buffer a fermer
+ */
+void bCloseBuffer(Buffer *aBuffer){
+	free(aBuffer->content);
+	free(aBuffer);
 }
 
 
