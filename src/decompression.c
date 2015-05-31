@@ -59,16 +59,15 @@ int decompression_LZW(FILE *aFileIn, Buffer *aBufferIn, FILE *aFileOut, Buffer *
 		}
 		wMonoExist = existe_code(wMono);
 		if(wMonoExist == 0){
-			wString = codeVersSequence(wMono);
+			wString = codeVersSequence(wMono, &wStrLen);
 			wNextPrefix = wMono;
 		}else{
-			/* Pour que le format du fichier soit juste, le code doit être
+			/* Pour que le format du fichier soit juste, le code Mono doit être
 			la prochaine entrée du dictionnaire */
-			wString = codeVersSequence(wPrefix);
+			wString = codeVersSequence(wPrefix, &wStrLen);
 			wNextPrefix = wPrefix;
 		}
 		/* Ecrire wString dans aFileOut */
-		wStrLen = strlen(wString);
 		for(wI = 0; wI < wStrLen; wI++){
 			bWrite(aFileOut, 8, wString[wI], aBufferOut);
 		}
@@ -79,10 +78,6 @@ int decompression_LZW(FILE *aFileIn, Buffer *aBufferIn, FILE *aFileOut, Buffer *
 		inserer(wPrefix, wString[0]);
 
 		wPrefix = wNextPrefix;
-		/* !!! TEMPORARY FIX !!! */
-		for(wI = 0; wI < wStrLen; wI++){
-			wString[wI] = 0;
-		}
 		free(wString);
 
 	}
