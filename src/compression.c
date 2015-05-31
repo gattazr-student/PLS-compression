@@ -30,9 +30,6 @@ int compression_LZW(FILE* aInput, Buffer* aBufferInput, FILE* aOutput, Buffer* a
 	while(bfeof(aInput, aBufferInput, 8) == 0){
 		wMono=bRead(aInput, 8, aBufferInput);
 		if(existe_seq(wPrefixe,wMono, &wPrefixeMono)==0){
-			if(wPrefixeMono > 1000){
-				existe_seq(wPrefixe,wMono, &wPrefixeMono);
-			}
 			wPrefixe=wPrefixeMono;
 		}else{
 			/* Calcul le nombre de bits à écrire dans le fichier de sortie et écrit la nouvelle valeur dans le fichier de sortie*/
