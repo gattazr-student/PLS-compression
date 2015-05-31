@@ -28,10 +28,10 @@ $(EXEC_0): $(OBJS_0)
 #-------------------------------------------------
 #                   DEPENDENCIES
 #-------------------------------------------------
-main.o: main.c
+main.o: main.c ../include/types.h ../include/binio.h ../include/dictionnaire.h ../include/compression.h ../include/decompression.h
 binio.o: binio.c ../include/binio.h ../include/types.h
-compression.o: compression.c ../include/compression.h
-decompression.o: decompression.c ../include/decompression.h
+compression.o: compression.c ../include/compression.h ../include/binio.h ../include/dictionnaire.h
+decompression.o: decompression.c ../include/decompression.h ../include/binio.h ../include/dictionnaire.h
 dictionnaire.o: dictionnaire.c ../include/dictionnaire.h
 
 #-------------------------------------------------

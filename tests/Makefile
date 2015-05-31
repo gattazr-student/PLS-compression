@@ -38,7 +38,8 @@ $(EXEC_1): $(OBJS_1)
 #-------------------------------------------------
 ../src/%.o:
 	make -C ../src $@
-test_dico.o: test_dico.c
+test_dico.o: test_dico.c ../include/dictionnaire.h
+test_r-w_binio.o: test_r-w_binio.c ../include/binio.h
 
 #-------------------------------------------------
 #                     CLEANING
