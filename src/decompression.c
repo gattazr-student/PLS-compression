@@ -44,6 +44,7 @@ int decompression_LZW(FILE *aFileIn, Buffer *aBufferIn, FILE *aFileOut, Buffer *
 			switch (wMono) {
 				case 256:
 					/* EOF */
+					liberer();
 					return 0;
 				break;
 				case 257:
@@ -80,6 +81,8 @@ int decompression_LZW(FILE *aFileIn, Buffer *aBufferIn, FILE *aFileOut, Buffer *
 
 		free(wString);
 	}
+
 	/* La compression s'est bien déroulée */
+	liberer();
 	return 0;
 }

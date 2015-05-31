@@ -48,6 +48,6 @@ int compression_LZW(FILE* aInput, Buffer* aBufferInput, FILE* aOutput, Buffer* a
 
 	/* Ecriture de EOF*/
 	bWrite(aOutput,wLengthBitsToWrite,(Code)256,aBufferOutput);
-
+	liberer();
 	return 0;
 }

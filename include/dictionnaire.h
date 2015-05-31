@@ -84,3 +84,9 @@ int existe_seq (Code aPrefixe, Code aMono, Code *aCode);
  * @return 0 si le code existe. 1 sinon.
  */
 int existe_code (Code aCode);
+
+/**
+ * liberer
+ * libère les structures : ids, dico et le dictionnaire
+ */
+void liberer();
