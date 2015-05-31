@@ -15,7 +15,7 @@
  */
 int decompression_LZW(FILE *aFileIn, Buffer *aBufferIn, FILE *aFileOut, Buffer *aBufferOut){
 
-	Code wPrefix, wNextPrefix;
+	Code wPrefix;
 	Code wMono;
 	int wSize;
 	char *wString;
@@ -60,26 +60,25 @@ int decompression_LZW(FILE *aFileIn, Buffer *aBufferIn, FILE *aFileOut, Buffer *
 		wMonoExist = existe_code(wMono);
 		if(wMonoExist == 0){
 			wString = codeVersSequence(wMono, &wStrLen);
-			wNextPrefix = wMono;
 		}else{
-			/* Pour que le format du fichier soit juste, le code Mono doit être
-			la prochaine entrée du dictionnaire */
 			wString = codeVersSequence(wPrefix, &wStrLen);
-			wNextPrefix = wPrefix;
 		}
+
 		/* Ecrire wString dans aFileOut */
 		for(wI = 0; wI < wStrLen; wI++){
 			bWrite(aFileOut, 8, wString[wI], aBufferOut);
 		}
+
+		wPrefix = inserer(wPrefix, wString[0]);
+
 		/* Ecris aussi wString[0] si necessaire */
 		if(wMonoExist != 0){
 			bWrite(aFileOut, 8, wString[0], aBufferOut);
+		}else{
+			wPrefix = wMono;
 		}
-		inserer(wPrefix, wString[0]);
 
-		wPrefix = wNextPrefix;
 		free(wString);
-
 	}
 	/* La compression s'est bien déroulée */
 	return 0;
