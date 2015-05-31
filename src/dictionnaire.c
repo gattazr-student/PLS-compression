@@ -122,8 +122,8 @@ void inverserChaine (char *aString, int aLength){
 	/* Inversion de la chaine */
 	while(wI < wMid){
 		wTemp = aString[wI];
-		aString[wI] = aString[aLength-wI];
-		aString[aLength-wI] = wTemp;
+		aString[wI] = aString[aLength-1-wI];
+		aString[aLength-1-wI] = wTemp;
 		wI++;
 	}
 }
@@ -194,7 +194,7 @@ char* codeVersSequence (Code aCode){
 
 	wSequence[wLg] = '\0';
 	/* On inverse la chaine */
-	inverserChaine(wSequence, wLg-1);
+	inverserChaine(wSequence, wLg);
 
 	return wSequence;
 }
