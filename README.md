@@ -15,7 +15,7 @@ Structures de données :
 - **Arbre*** enfant
 - **Arbre*** frere
 - **Arbre*** parent
-- **Arbre**\*\* id
+- **Code** code
 
 ### Code :
 - typedef uint16_t
@@ -46,7 +46,14 @@ LZW
 │   ├── decompression.c
 │   ├── dictionnaire.c
 │   └── main.c
-└── tests
+├── tests
+│   ├── data
+│   │   ├── test1
+│   │   └── test2
+│   ├── Makefile
+│   ├── test_dico.c
+│   ├── test\_r-w\_binio.c
+
 ```
 
 Convention de nommage :
