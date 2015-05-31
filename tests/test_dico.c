@@ -5,7 +5,7 @@
 
 int main(){
 
-	Code a, b, c, d, e, f, g, h, i;
+	Code a, b, c, d, e, f, g, h, i, code;
 	char * s = NULL;
 	int wI;
 	int lg, lg1;
@@ -20,17 +20,20 @@ int main(){
 	h = inserer(261,72);
 	i = inserer(262,65);
 	s = codeVersSequence(263, &lg);
+	code = sequenceVersCode(s, 6);
 
-	printf("inserer(67,79) : %d\n", a);
+	printf("inserer(82,69) : %d\n", a);
 	printf("existe_code(259) : %d\n", c);
-	printf("inserer(259,85) : %d\n", d);
+	printf("inserer(259,65) : %d\n", d);
 	printf("existe_code(260) : %d\n", e);
 	printf("existe_seq(259,65,&b) : %d\n", f);
 	printf("inserer(260,84) : %d\n", g);
 	printf("inserer(261,72) : %d\n", h);
-	printf("inserer(262,65) : %d\n", i);
-	printf("codeVersSequence(263, &lg) : %s\n", s);
-	printf("longueur de la séquence : %d\n", lg);
+	printf("inserer(262,65) : %d\n\n", i);
+	
+	printf("	codeVersSequence(263, &lg) : %s\n", s);
+	printf("	longueur de la séquence : %d\n", lg);
+	printf("	sequenceVersCode (REATHA) : %d\n\n\n", code);  
 
 	/* longue séquence pour tester codeVersSequence */
 	b = 'B';
@@ -42,6 +45,8 @@ int main(){
 	s = codeVersSequence(a, &lg1);
 	printf("codeVersSequence(%d, &lg1) : %s\n", a, s);
 	printf("longueur de la séquence : %d\n", lg1);
+	code = sequenceVersCode(s, lg1);
+	printf("sequenceVersCode : %d\n\n", code);  
 
 	/* Très longue séquence séquence */
 	a = 0;
@@ -49,6 +54,7 @@ int main(){
 		a = inserer(a, b);
 		b++;
 	}
+
 
 	return 0;
 }

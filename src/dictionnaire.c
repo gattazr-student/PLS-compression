@@ -201,6 +201,47 @@ char* codeVersSequence (Code aCode, int* wLg){
 
 
 /**
+ * sequenceVersCode
+ * Retourne le code lié à une séquence
+ * @param aSequence : la séquence à partir de laquelle on veut retrouver le code
+ * @param aLongueur : longueur de la séquence
+ * @return le code correspondant à la sequence aSequence ou -1 s'il y a une erreur
+ */
+Code sequenceVersCode (char* aSequence, int aLongueur){
+
+	Arbre* wDico = dictionnaire->dico;
+	Arbre* wKid = NULL;
+	int cpt = 0;
+	int i = aSequence[cpt];
+	Code code;
+	Arbre cellule = wDico[i];
+	
+	wKid = cellule.enfant;
+	cpt++;
+
+	while(cpt < aLongueur){
+		while(wKid != NULL && wKid->valeur != aSequence[cpt]){
+			wKid = wKid->frere;
+		}
+		if(wKid == NULL){
+			printf("sequenceVersCode : la séquence n'est pas dans le dictionnaire\n");
+			return -1;
+		}
+		if(wKid->valeur == aSequence[cpt]){		
+			cpt++;
+		}
+		if(wKid->enfant != NULL){
+			wKid = wKid->enfant;
+		}
+	}
+	
+	code = wKid->code;	
+	
+	return code;
+}
+
+
+/**
  * existe
  * retourne 0 ou 1 signifiant si le Code aPrefixe.aMono existe.
  * @param aPrefixe : le code du préfixe de la séquence

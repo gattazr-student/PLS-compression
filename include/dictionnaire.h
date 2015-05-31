@@ -50,20 +50,20 @@ void inverserChaine (char *aSrc, int aLength);
 
 /**
  * codeVersSequence
- * Retourne la chaine de caractère lié au code passé en paramètre
- * la string a retourner doit avoir été malloc
- * remonter l'arbre en insérerant en queue et retourner la chaine de caractères à la fin
- * @param aCode :
- * @return
+ * Retourne la chaine de caractère liée au code passé en paramètre
+ * la string à retourner doit avoir été allouée avec un malloc
+ * remonter l'arbre en insérant en queue et inverser la chaine de caractères à la fin
+ * @param aCode : le code à partir duquel on veut retrouver la séquence
+ * @return la chaine de caractère liée au code passé en paramètre, null si le code n'existe pas
  */
 char* codeVersSequence (Code aCode, int* wLg);
 
 /**
  * sequenceVersCode
  * Retourne le code lié à une séquence
- * @param aSequence :
- * @param aLongeur :
- * @return
+ * @param aSequence : la séquence à partir de laquelle on veut retrouver le code
+ * @param aLongueur : longueur de la séquence
+ * @return le code correspondant à la sequence aSequence
  */
 Code sequenceVersCode (char* aSequence, int aLongueur);
 
