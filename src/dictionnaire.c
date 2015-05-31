@@ -261,3 +261,15 @@ int existe_code (Code aCode){
 	}
 
 }
+
+void liberer(){
+
+	int i;
+
+	for(i = 0; i <= dictionnaire->nbElements; i++){
+		free(dictionnaire->ids[i]);
+	}
+	free(dictionnaire->ids);
+	free(dictionnaire->dico);
+	free(dictionnaire);
+}
