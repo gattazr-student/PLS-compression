@@ -270,8 +270,10 @@ int existe_code (Code aCode){
 void liberer(){
 
 	int i;
+	int wSizeIds;
 
-	for(i = 0; i <= dictionnaire->nbElements; i++){
+	wSizeIds = dictionnaire->nbElements - FIRST_AVAILABLE;
+	for(i = 0; i < wSizeIds; i++){
 		free(dictionnaire->ids[i]);
 	}
 	free(dictionnaire->ids);
