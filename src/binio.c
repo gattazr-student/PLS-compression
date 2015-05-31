@@ -162,6 +162,7 @@ Code bRead(FILE* aFile, int aBits, Buffer* aBuffer){
 	int wDisponible, wBitsLus;
 	int wRead, wRest;
 	int wI;
+	int wLengthToCopy;
 
 	/* Calcul du nombre de bits disponible dans le buffer */
 	wDisponible = (aBuffer->longeur-(aBuffer->courant-aBuffer->content))*8 - (8 - aBuffer->significatif);
@@ -169,17 +170,16 @@ Code bRead(FILE* aFile, int aBits, Buffer* aBuffer){
 	/* Le buffer ne contient pas sufisament de bits pour faire la lecture complète */
 	if(wDisponible < aBits){
 
-		/* Déplace le pointeur avec un offset de -strlen(aBuffer->courant) bytes pour relire le/les derniers
-		octets du buffer courant */
-		if(fseek(aFile, -strlen(aBuffer->courant), SEEK_CUR) != 0){
-			fprintf(stderr, "Error while reading the file\n");
-			exit(1);
+		/* copie les derniers octets non lus du buffer avant de le remplir a nouveau */
+		wLengthToCopy = aBuffer->longeur - (aBuffer->courant - aBuffer->content);
+		if(wLengthToCopy > 0){
+			memcpy(aBuffer->content, aBuffer->courant, wLengthToCopy );
 		}
 
-		/* Lit entre 0 et BUFFER_LENGTH octets */
-		wRead = fread(aBuffer->content, sizeof(char), BUFFER_LENGTH, aFile);
+		/* Lit entre 0 et BUFFER_LENGTH-wLengthToCopy octets */
+		wRead = fread(aBuffer->content + wLengthToCopy, sizeof(char), BUFFER_LENGTH - wLengthToCopy, aFile);
 		aBuffer->courant = aBuffer->content;
-		aBuffer->longeur = wRead;
+		aBuffer->longeur = wRead + wLengthToCopy;
 
 		/* Affecte '\0' à tous les élements restants du buffer */
 		for(wI = wRead; wI < BUFFER_LENGTH+1; wI++){
