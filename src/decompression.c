@@ -2,6 +2,7 @@
 #include <dictionnaire.h>
 #include <binio.h>
 #include <string.h>
+#include <decompression.h>
 
 /**
  * decompression_LZW
@@ -14,7 +15,7 @@
  */
 int decompression_LZW(FILE *aFileIn, Buffer *aBufferIn, FILE *aFileOut, Buffer *aBufferOut){
 
-	Code wPrefix;
+	Code wPrefix, wNextPrefix;
 	Code wMono;
 	int wSize;
 	char *wString;
@@ -30,7 +31,12 @@ int decompression_LZW(FILE *aFileIn, Buffer *aBufferIn, FILE *aFileOut, Buffer *
 	initialiser(); /* Initiailisation du dictionnaire */
 	wSize = 9; /* La taille de base est toujours 9 en décompression */
 	wPrefix = bRead(aFileIn, wSize, aBufferIn);
-	bWrite(aFileOut, wSize, wPrefix, aBufferOut);
+	/* Le premier préfixe doit être un mono */
+	if(wPrefix > INI_TAB_SIZE-1){
+		fprintf(stderr, "The file format is wrong\n");
+		return -1;
+	}
+	bWrite(aFileOut, 8, wPrefix, aBufferOut);
 	while(bfeof(aFileIn, aBufferIn, wSize) == 0){
 		wMono = bRead(aFileIn, wSize, aBufferIn);
 		/* Actions spéciales*/
@@ -41,7 +47,7 @@ int decompression_LZW(FILE *aFileIn, Buffer *aBufferIn, FILE *aFileOut, Buffer *
 					return 0;
 				break;
 				case 257:
-					/* Agrandir le dictionnaire */
+					/* Agrandir le nombre de bits sur lequel lire */
 					wSize++;
 				break;
 				case 258:
@@ -54,21 +60,32 @@ int decompression_LZW(FILE *aFileIn, Buffer *aBufferIn, FILE *aFileOut, Buffer *
 		wMonoExist = existe_code(wMono);
 		if(wMonoExist == 0){
 			wString = codeVersSequence(wMono);
+			wNextPrefix = wMono;
 		}else{
+			/* Pour que le format du fichier soit juste, le code doit être
+			la prochaine entrée du dictionnaire */
 			wString = codeVersSequence(wPrefix);
+			wNextPrefix = wPrefix;
 		}
 		/* Ecrire wString dans aFileOut */
 		wStrLen = strlen(wString);
 		for(wI = 0; wI < wStrLen; wI++){
-			bWrite(aFileOut, wSize, wString[wI], aBufferOut);
+			bWrite(aFileOut, 8, wString[wI], aBufferOut);
 		}
 		/* Ecris aussi wString[0] si necessaire */
-		if(wMonoExist == 0){
-			bWrite(aFileOut, wSize, wString[0], aBufferOut);
+		if(wMonoExist != 0){
+			bWrite(aFileOut, 8, wString[0], aBufferOut);
 		}
-		wPrefix = inserer(wPrefix, wString[0]);
+		inserer(wPrefix, wString[0]);
+
+		wPrefix = wNextPrefix;
+		/* !!! TEMPORARY FIX !!! */
+		for(wI = 0; wI < wStrLen; wI++){
+			wString[wI] = 0;
+		}
 		free(wString);
+
 	}
-	/* La compression s'est bien déroulé*/
+	/* La compression s'est bien déroulée */
 	return 0;
 }
