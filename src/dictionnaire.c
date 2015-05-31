@@ -137,14 +137,14 @@ void inverserChaine (char *aString, int aLength){
  * @param aCode : le code à partir duquel on veut retrouver la séquence
  * @return la chaine de caractère liée au code passé en paramètre, null si le code n'existe pas
  */
-char* codeVersSequence (Code aCode){
+char* codeVersSequence (Code aCode, int* wLg){
 
 	char * wSequence = NULL;
 	char * wTmp = NULL;
 	Arbre * wDernier = NULL;
 	char wCourant;
-	int wLg = 1;
 	int wSize;
+	*wLg = 1;
 
 	/* Cas où le code à rechercher n'existe pas */
 	if (existe_code(aCode) == 1){
@@ -175,7 +175,7 @@ char* codeVersSequence (Code aCode){
 	/* On remonte l'arbre jusqu'en haut */
 	while(wDernier->parent != NULL){
 		wDernier = wDernier->parent;
-		if(wLg > wSize){
+		if(*wLg > wSize){
 			wSize = wSize*2;
 			wTmp = realloc(wSequence, wSize);
 
@@ -188,16 +188,17 @@ char* codeVersSequence (Code aCode){
 			}
 
 		}
-		wSequence[wLg] = wDernier->valeur;
-		wLg++;
+		wSequence[*wLg] = wDernier->valeur;
+		*wLg = *wLg + 1;
 	}
 
-	wSequence[wLg] = '\0';
+	wSequence[*wLg] = '\0';
 	/* On inverse la chaine */
-	inverserChaine(wSequence, wLg);
+	inverserChaine(wSequence, *wLg);
 
 	return wSequence;
 }
+
 
 /**
  * existe
@@ -262,6 +263,10 @@ int existe_code (Code aCode){
 
 }
 
+/**
+ * liberer
+ * libère les structures : ids, dico et le dictionnaire
+ */
 void liberer(){
 
 	int i;

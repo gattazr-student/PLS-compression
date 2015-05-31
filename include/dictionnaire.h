@@ -56,7 +56,7 @@ void inverserChaine (char *aSrc, int aLength);
  * @param aCode :
  * @return
  */
-char* codeVersSequence (Code aCode);
+char* codeVersSequence (Code aCode, int* wLg);
 
 /**
  * sequenceVersCode

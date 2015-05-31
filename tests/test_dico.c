@@ -8,6 +8,7 @@ int main(){
 	Code a, b, c, d, e, f, g, h, i;
 	char * s = NULL;
 	int wI;
+	int lg, lg1;
 
 	initialiser();
 	a = inserer(82,69);
@@ -18,7 +19,7 @@ int main(){
 	g = inserer(260,84);
 	h = inserer(261,72);
 	i = inserer(262,65);
-	s = codeVersSequence(263);
+	s = codeVersSequence(263, &lg);
 
 	printf("inserer(67,79) : %d\n", a);
 	printf("existe_code(259) : %d\n", c);
@@ -28,7 +29,8 @@ int main(){
 	printf("inserer(260,84) : %d\n", g);
 	printf("inserer(261,72) : %d\n", h);
 	printf("inserer(262,65) : %d\n", i);
-	printf("codeVersSequence(263) : %s\n", s);
+	printf("codeVersSequence(263, &lg) : %s\n", s);
+	printf("longueur de la séquence : %d\n", lg);
 
 	/* longue séquence pour tester codeVersSequence */
 	b = 'B';
@@ -37,8 +39,9 @@ int main(){
 		a = inserer(a, b);
 		b++;
 	}
-	s = codeVersSequence(a);
-	printf("codeVersSequence(%d) : %s\n", a, s);
+	s = codeVersSequence(a, &lg1);
+	printf("codeVersSequence(%d, &lg1) : %s\n", a, s);
+	printf("longueur de la séquence : %d\n", lg1);
 
 	/* Très longue séquence séquence */
 	a = 0;
