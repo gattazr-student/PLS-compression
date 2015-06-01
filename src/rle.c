@@ -1,5 +1,4 @@
 #include <rle.h>
-#include <binio.h>
 
 /*
 * Coder RLE
@@ -11,41 +10,52 @@
 void coderRle(FILE* aFilein, FILE* aFileout){
 
 	int wEtat = 1;
-	Code wC, wCcourant, wI = 0;
-	Buffer* wBlect = NULL;
-	Buffer* wBecr = NULL;
+	unsigned char i = 1;
+	int wC;
+	int wCcourant;
 	
-	wBlect = bMakeBuffer();
-	wBecr = bMakeBuffer();
-	wC = bRead(aFilein, 8, wBlect);
-
-	while (!bfeof(aFilein, wBlect, 8)) {
-		if (wEtat == 1) {                  
-			wCcourant = wC;
-			wEtat = 2;
-			bWrite(aFileout, 8, wCcourant, wBecr);
-		} else if (wEtat == 2) {           
-			if (wC == wCcourant) {
-				wEtat = 3;
-			} else {
-				wCcourant = wC;
-			}
-			bWrite(aFileout, 8, wCcourant, wBecr);
-		} else {                            
-			if (wC == wCcourant && wI < 255){
-				wI++;
-			} else {
-				bWrite(aFileout, 8, wI, wBecr);
-				wCcourant = wC;
-				bWrite(aFileout, 8, wCcourant, wBecr);
-				wI = 0;
+	wCcourant = fgetc(aFilein);
+	wC = fgetc(aFilein);
+	fprintf(stderr, "%d\n", wC);
+	
+	while (!feof(aFilein)) {
+		if(wEtat == 1){
+			if(wC == wCcourant){
+				i++;
 				wEtat = 2;
+			} else {
+				fputc(1, aFileout);
+				fputc(wCcourant, aFileout);
+				wCcourant = wC;
 			}
 		}
-		wC = bRead(aFilein, 8, wBlect);
+		else if (wEtat == 2){
+			if(wC == wCcourant){
+				i++;
+				if(i == 255){
+					fputc(i, aFileout);
+					fputc(wCcourant, aFileout);	
+					i = 1;
+					wEtat = 1;	
+				}		
+			}
+			else{
+				fputc(i, aFileout);
+				fputc(wCcourant, aFileout);
+				i = 1;
+				wEtat = 1;
+			}
+		}
+		wCcourant = wC;
+		wC = fgetc(aFilein);
+		fprintf(stderr, "%d\n", wC);
+		if(feof(aFilein)){
+			fputc(i, aFileout);
+			fputc(wCcourant, aFileout);
+		}
 	}
-}
 
+}
 
 /*
 * Decoder RLE
@@ -56,35 +66,17 @@ void coderRle(FILE* aFilein, FILE* aFileout){
 
 void decoderRle(FILE* aFilein, FILE* aFileout){
 
-	int wEtat = 1, wJ;
-	Code wC, wCcourant, wI = 0;
-	Buffer* wBlect = NULL;
-	Buffer* wBecr = NULL;
-
-	wBlect = bMakeBuffer();
-	wBecr = bMakeBuffer();
-	wC = bRead(aFilein, 8, wBlect);
-
-	while (!bfeof(aFilein, wBlect, 8)) {
-		if (wEtat == 1){
-			wCcourant = wC;
-			bWrite(aFileout, 8, wC, wBecr);
-			wEtat = 2;
-		} else if (wEtat == 2) {
-			if (wCcourant != wC) {
-				wCcourant = wC;
-				bWrite(aFileout, 8, wC, wBecr);
-			} else {
-				bWrite(aFileout, 8, wC, wBecr);
-				wEtat = 3;
-			}
-		} else {
-			wI = wC;
-			for (wJ = 0 ; wJ < wI ; wI++) {
-				bWrite(aFileout, 8, wCcourant, wBecr);
-			}
-			wEtat = 1;
+	int wJ;
+	int wC;
+	int wCcourant;
+	
+	while (!feof(aFilein)) {
+		wCcourant = fgetc(aFilein);
+		wC = fgetc(aFilein);
+		
+		for(wJ=0; wJ<wCcourant; wJ++){
+			fputc(wC, aFileout);
 		}
-		wC = bRead(aFilein, 8, wBlect);
 	}
 }
+
