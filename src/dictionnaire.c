@@ -33,6 +33,9 @@ void initialiser(){
 	for(i=0; i<256; i++){
 		dictionnaire->dico[i].valeur = i;
 		dictionnaire->dico[i].code = i;
+		dictionnaire->dico[i].enfant = NULL;
+		dictionnaire->dico[i].frere = NULL;
+		dictionnaire->dico[i].parent = NULL;
 	}
 
 	dictionnaire->nbElements = FIRST_AVAILABLE-1;
@@ -219,7 +222,7 @@ Code sequenceVersCode (char* aSequence, int aLongueur){
 	int i = aSequence[cpt];
 	Code code;
 	Arbre cellule = wDico[i];
-	
+
 	wKid = cellule.enfant;
 	cpt++;
 
@@ -231,16 +234,16 @@ Code sequenceVersCode (char* aSequence, int aLongueur){
 			printf("sequenceVersCode : la séquence n'est pas dans le dictionnaire\n");
 			return -1;
 		}
-		if(wKid->valeur == aSequence[cpt]){		
+		if(wKid->valeur == aSequence[cpt]){
 			cpt++;
 		}
 		if(wKid->enfant != NULL){
 			wKid = wKid->enfant;
 		}
 	}
-	
-	code = wKid->code;	
-	
+
+	code = wKid->code;
+
 	return code;
 }
 
@@ -332,5 +335,5 @@ void liberer(){
  * @return 1 si le dictionnaire est plein. 0 sinon.
  */
 int isFull(){
-	return ((dictionnaire->nbElements-(FIRST_AVAILABLE-1)) == dictionnaire->tailleDico);
+	return (dictionnaire->nbElements-(FIRST_AVAILABLE-3) >= dictionnaire->tailleDico);
 }
