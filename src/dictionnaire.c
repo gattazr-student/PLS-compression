@@ -13,6 +13,10 @@ void initialiser(){
 
 	int i = 0;
 
+	if(dictionnaire != NULL){
+		liberer();
+	}
+
 	dictionnaire = malloc(sizeof(Dict));
 	dictionnaire->ids = (Arbre**) calloc(256, sizeof(Arbre*));
 	if (dictionnaire->ids == NULL){
@@ -65,7 +69,7 @@ Code inserer (Code aPrefixe, Code aMono){
 	}
 
 	/* Vérification taille du tableau -> si on dépasse, on double la taille de ids */
-	if((dictionnaire->nbElements-(FIRST_AVAILABLE-1)) == dictionnaire->tailleDico){
+	if(isFull() == 1){
 		aTmp = realloc(dictionnaire->ids, dictionnaire->tailleDico*2*sizeof(Arbre*));
 		dictionnaire->tailleDico = dictionnaire->tailleDico * 2;
 
@@ -320,4 +324,13 @@ void liberer(){
 	free(dictionnaire->ids);
 	free(dictionnaire->dico);
 	free(dictionnaire);
+}
+
+/**
+ * isFull
+ * Si le dictionnaire est plein, retourne 1. 0 sinon
+ * @return 1 si le dictionnaire est plein. 0 sinon.
+ */
+int isFull(){
+	return ((dictionnaire->nbElements-(FIRST_AVAILABLE-1)) == dictionnaire->tailleDico);
 }

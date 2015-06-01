@@ -90,3 +90,10 @@ int existe_code (Code aCode);
  * libère les structures : ids, dico et le dictionnaire
  */
 void liberer();
+
+/**
+ * isFull
+ * Si le dictionnaire est plein, retourne 1. 0 sinon
+ * @return 1 si le dictionnaire est plein. 0 sinon.
+ */
+int isFull();
