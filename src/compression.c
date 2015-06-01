@@ -30,13 +30,13 @@ int compression_LZW(FILE* aInput, Buffer* aBufferInput, FILE* aOutput, Buffer* a
 	while(bfeof(aInput, aBufferInput, 8) == 0){
 		wMono=bRead(aInput, 8, aBufferInput);
 		/* Réinitialise le dico si on est sur le point de faire un code sur 14 bits */
-		if(isFull()==1 && wLengthBitsToWrite + 1 > 12){
+		/*if(isFull()==1 && wLengthBitsToWrite + 1 > 12){
 			bWrite(aOutput,wLengthBitsToWrite,(Code)258, aBufferOutput);
 			wPrefixe = wMono;
 			wLengthBitsToWrite = 9;
 			initialiser();
 			continue;
-		}
+		}*/
 		if(existe_seq(wPrefixe,wMono, &wPrefixeMono)==0){
 			wPrefixe=wPrefixeMono;
 		}else{
