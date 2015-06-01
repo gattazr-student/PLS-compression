@@ -108,7 +108,7 @@ void bFlush(FILE* aFile, Buffer* aBuffer){
  */
 void bFlush_force(FILE* aFile, Buffer* aBuffer){
 	bFlush(aFile, aBuffer);
-	if(aBuffer->longeur == 1){
+	if(aBuffer->significatif > 0){
 		fwrite(aBuffer->content, sizeof(char), 1, aFile);
 	}
 	aBuffer->content[0] = 0;
