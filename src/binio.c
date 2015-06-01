@@ -65,8 +65,10 @@ void bClose(FILE* aFile, Buffer* aBuffer){
  * @param aBuffer : Buffer a fermer
  */
 void bCloseBuffer(Buffer *aBuffer){
-	free(aBuffer->content);
-	free(aBuffer);
+	if(aBuffer != NULL){
+		free(aBuffer->content);
+		free(aBuffer);
+	}
 }
 
 

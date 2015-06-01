@@ -1,3 +1,9 @@
+
+/* Nombre maximum de bits utilisé pour un code */
+#ifndef TAILLE_CODE_MAX
+#define TAILLE_CODE_MAX 14
+#endif
+
 /**
  * compression_LZW
  * Compresse les données du fichier aInput dans un fichier aOutput,
