@@ -26,8 +26,8 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 # Décompresse
-echo "Décompression: $EXEC -d$OUTPUT_DIR$FILE_NAME.lzw > $OUTPUT_DIR${FILE_NAME}.EXTENSION 2> $OUTPUT_DIR${FILE_NAME}_decompress.log"
-$EXEC -d$OUTPUT_DIR$FILE_NAME.lzw > $OUTPUT_DIRFILE_NAME.EXTENSION 2> $OUTPUT_DIR${FILE_NAME}_decompress.log
+echo "Décompression: $EXEC -d$OUTPUT_DIR$FILE_NAME.lzw > $OUTPUT_DIR$FILE_NAME.$EXTENSION 2> $OUTPUT_DIR${FILE_NAME}_decompress.log"
+$EXEC -d$OUTPUT_DIR$FILE_NAME.lzw > $OUTPUT_DIR$FILE_NAME.$EXTENSION 2> $OUTPUT_DIR${FILE_NAME}_decompress.log
 
 
 if [ $? -ne 0 ]; then
@@ -37,4 +37,4 @@ fi
 
 # Puis fais un diff si tous s'est bien déroulé jusqu'ici
 echo "Diff: "
-diff $1 $OUTPUT_DIRFILE_NAME.EXTENSION
+diff $1 $OUTPUT_DIR$FILE_NAME.$EXTENSION
