@@ -17,6 +17,10 @@ void initialiser(){
 		liberer();
 	}
 
+	#ifdef DEBUG_DICO
+		fprintf(stderr, "Init dico\n");
+	#endif
+
 	dictionnaire = malloc(sizeof(Dict));
 	dictionnaire->ids = (Arbre**) calloc(256, sizeof(Arbre*));
 	if (dictionnaire->ids == NULL){
@@ -83,6 +87,9 @@ Code inserer (Code aPrefixe, Code aMono){
 			perror("Reallocation failed\n");
 			exit(EXIT_FAILURE);
 		}
+		#ifdef DEBUG_DICO
+			fprintf(stderr, "Taille doublée\n");
+		#endif
 	}
 
 	aNew = (Arbre*) malloc(sizeof(Arbre));
@@ -109,6 +116,10 @@ Code inserer (Code aPrefixe, Code aMono){
 	/* Rajoute dans le tableau ids le nouveau noeud */
 	dictionnaire->ids[i-FIRST_AVAILABLE] = aNew;
 	aNew->code = i;
+
+	#ifdef DEBUG_DICO
+		fprintf(stderr, "Add (%d.%d) = %d\n", aPrefixe, aMono, i);
+	#endif
 
 	return i;
 }
@@ -327,6 +338,10 @@ void liberer(){
 	free(dictionnaire->ids);
 	free(dictionnaire->dico);
 	free(dictionnaire);
+
+	#ifdef DEBUG_DICO
+		fprintf(stderr, "Libère dico\n");
+	#endif
 }
 
 /**
@@ -335,5 +350,5 @@ void liberer(){
  * @return 1 si le dictionnaire est plein. 0 sinon.
  */
 int isFull(){
-	return (dictionnaire->nbElements-(FIRST_AVAILABLE-3) >= dictionnaire->tailleDico);
+	return (dictionnaire->nbElements-(FIRST_AVAILABLE-4) >= dictionnaire->tailleDico);
 }
