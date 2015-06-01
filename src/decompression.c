@@ -54,6 +54,14 @@ int decompression_LZW(FILE *aFileIn, Buffer *aBufferIn, FILE *aFileOut, Buffer *
 				case 258:
 					/* Réinitialiser le dictionnaire */
 					initialiser();
+					wPrefix = bRead(aFileIn, wSize, aBufferIn);
+					wSize = 9;
+					if(wPrefix > INI_TAB_SIZE-1){
+						fprintf(stderr, "The file format is wrong\n");
+						return -1;
+					}
+					bWrite(aFileOut, 8, wPrefix, aBufferOut);
+					continue;
 				break;
 			}
 			continue;
