@@ -41,22 +41,25 @@ int compression_LZW(FILE* aInput, Buffer* aBufferInput, FILE* aOutput, Buffer* a
 		if(existe_seq(wPrefixe,wMono, &wPrefixeMono)==0){
 			wPrefixe=wPrefixeMono;
 		}else{
-			/* Il faut augmenter la taille du code car le dictionnair est plein */
+			/* Il faut augmenter la taille du code car le dictionnaire est plein */
 			if(isFull()==1){
 				bWrite(aOutput,wLengthBitsToWrite,(Code)257, aBufferOutput);
+				fprintf(stderr, "%d : %d\n", 257, wLengthBitsToWrite);
 				wLengthBitsToWrite++;
 			}
 
 			bWrite(aOutput,wLengthBitsToWrite,wPrefixe, aBufferOutput);
-
+			fprintf(stderr, "%d : %d\n", wPrefixe, wLengthBitsToWrite);
 			inserer(wPrefixe, wMono);
 			wPrefixe=wMono;
 		}
 	}
 	bWrite(aOutput,wLengthBitsToWrite,wPrefixe,aBufferOutput);
+	fprintf(stderr, "%d : %d\n", wPrefixe, wLengthBitsToWrite);
 
 	/* Ecriture de EOF*/
 	bWrite(aOutput,wLengthBitsToWrite,(Code)256,aBufferOutput);
+	fprintf(stderr, "%d : %d\n", 256, wLengthBitsToWrite);
 	liberer();
 	return 0;
 }
