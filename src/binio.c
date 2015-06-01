@@ -108,7 +108,7 @@ void bFlush(FILE* aFile, Buffer* aBuffer){
  */
 void bFlush_force(FILE* aFile, Buffer* aBuffer){
 	bFlush(aFile, aBuffer);
-	if(aBuffer->significatif > 0){
+	if(aBuffer->significatif > 0 && aBuffer->significatif < 8 ){
 		fwrite(aBuffer->content, sizeof(char), 1, aFile);
 	}
 	aBuffer->content[0] = 0;
@@ -222,6 +222,10 @@ Code bRead(FILE* aFile, int aBits, Buffer* aBuffer){
 		aBuffer->significatif = aBuffer->significatif - wRest;
 	}
 
+	#ifdef DEBUG_BINIO
+		fprintf(stderr, "%d : %d\n", wResult, aBits);
+	#endif
+
 	return wResult;
 }
 
@@ -288,6 +292,9 @@ void bWrite(FILE* aFile, int aBits, Code aCode, Buffer* aBuffer){
 		aBuffer->significatif = aBuffer->significatif - wRest;
 	}
 
+	#ifdef DEBUG_BINIO
+		fprintf(stderr, "%d : %d\n", aCode, aBits);
+	#endif
 }
 
 /**

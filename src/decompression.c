@@ -31,7 +31,7 @@ int decompression_LZW(FILE *aFileIn, Buffer *aBufferIn, FILE *aFileOut, Buffer *
 	initialiser(); /* Initiailisation du dictionnaire */
 	wSize = 9; /* La taille de base est toujours 9 en décompression */
 	wPrefix = bRead(aFileIn, wSize, aBufferIn);
-	fprintf(stderr, "%d : %d\n", wPrefix, wSize);
+
 	/* Le premier préfixe doit être un mono */
 	if(wPrefix > INI_TAB_SIZE-1){
 		fprintf(stderr, "The file format is wrong\n");
@@ -40,7 +40,6 @@ int decompression_LZW(FILE *aFileIn, Buffer *aBufferIn, FILE *aFileOut, Buffer *
 	bWrite(aFileOut, 8, wPrefix, aBufferOut);
 	while(bfeof(aFileIn, aBufferIn, wSize) == 0){
 		wMono = bRead(aFileIn, wSize, aBufferIn);
-		fprintf(stderr, "%d : %d\n", wMono, wSize);
 		/* Actions spéciales*/
 		if(wMono > INI_TAB_SIZE-1 && wMono < FIRST_AVAILABLE){
 			switch (wMono) {
@@ -58,7 +57,7 @@ int decompression_LZW(FILE *aFileIn, Buffer *aBufferIn, FILE *aFileOut, Buffer *
 					initialiser();
 					wSize = 9;
 					wPrefix = bRead(aFileIn, wSize, aBufferIn);
-					fprintf(stderr, "%d : %d\n", wPrefix, wSize);
+
 					if(wPrefix > INI_TAB_SIZE-1){
 						fprintf(stderr, "The file format is wrong\n");
 						return -1;
