@@ -34,7 +34,7 @@ FILE* bOpen(char* aFileName, char* aFlags){
 Buffer* bMakeBuffer(){
 	Buffer* wBuffer;
 	wBuffer = malloc(sizeof(Buffer));
-	wBuffer->content = calloc(BUFFER_LENGTH + 1, sizeof(char)); /* Buffer de lecture */
+	wBuffer->content = calloc(BUFFER_LENGTH, sizeof(char)); /* Buffer de lecture */
 	wBuffer->courant = wBuffer->content;
 	wBuffer->significatif = 8;
 	wBuffer->longeur = 0;
@@ -79,23 +79,19 @@ void bCloseBuffer(Buffer *aBuffer){
  * @param aBuffer : buffer d'écriture
  */
 void bFlush(FILE* aFile, Buffer* aBuffer){
-	int wI, wLength;
+	int wLength;
 	char wLast = '\0';
 	if (aFile != NULL && aBuffer != NULL) {
 		if(aBuffer->content != NULL && aBuffer->longeur > 0){
-			wLength = aBuffer->longeur;
+			wLength = aBuffer->longeur + 1;
 			aBuffer->longeur = 0;
 			/* Ne copie pas le dernier octet si incomplet */
-			if(aBuffer->significatif < 8){
+			if(aBuffer->significatif > 0){
 				wLast =  *(aBuffer->courant); /* Sauvegarde le dernier octet */
-				aBuffer->longeur = 1;
+				wLength--;
 			}
 			fwrite(aBuffer->content, sizeof(char), wLength, aFile);
 
-			/* Réinitialise le buffer */
-			for(wI = 1; wI < wLength + 1; wI++){
-				aBuffer->content[wI] = '\0';
-			}
 			/* Sauvegarde le dernier octet sauvegardé */
 			aBuffer->content[0] = wLast;
 			aBuffer->courant = aBuffer->content;
@@ -161,7 +157,6 @@ Code bRead(FILE* aFile, int aBits, Buffer* aBuffer){
 	char wMask;
 	int wDisponible, wBitsLus;
 	int wRead, wRest;
-	int wI;
 	int wLengthToCopy;
 
 	/* Calcul du nombre de bits disponible dans le buffer */
@@ -180,11 +175,6 @@ Code bRead(FILE* aFile, int aBits, Buffer* aBuffer){
 		wRead = fread(aBuffer->content + wLengthToCopy, sizeof(char), BUFFER_LENGTH - wLengthToCopy, aFile);
 		aBuffer->courant = aBuffer->content;
 		aBuffer->longeur = wRead + wLengthToCopy;
-
-		/* Affecte '\0' à tous les élements restants du buffer */
-		for(wI = wRead; wI < BUFFER_LENGTH+1; wI++){
-			aBuffer->content[wI] = '\0';
-		}
 
 		/* Calcul a nouveau du nombre de bits disponible dans le buffer */
 		wDisponible = wRead*8 - (8 - aBuffer->significatif);
@@ -268,7 +258,7 @@ void bWrite(FILE* aFile, int aBits, Code aCode, Buffer* aBuffer){
 		aBuffer->significatif = 8;
 	/* Si il y en a moins de 8 */
 	} else if(aBuffer->significatif < 8){
-		/* Il y a plus de bits à lire que de bits dans le courant*/
+		/* Il y a plus de bits à écrire que de bits dans le courant*/
 		if(aBits > aBuffer->significatif){
 			wTemp = aCode >> (aBits - aBuffer->significatif);
 			wBitsEcrits = aBuffer->significatif;

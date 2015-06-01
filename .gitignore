@@ -1,2 +1,5 @@
 *.o
 /src/LZW
+/tests/test_dico
+/tests/test_r-w_binio
+/tests/test_binio

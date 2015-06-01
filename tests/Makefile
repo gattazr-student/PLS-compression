@@ -19,7 +19,11 @@ SRCS_1=test_r-w_binio.c ../src/binio.c
 OBJS_1=${SRCS_1:.c=.o}
 EXEC_1=test_r-w_binio
 
-EXECS=$(EXEC_0) $(EXEC_1)
+SRCS_2=test_binio.c ../src/binio.c
+OBJS_2=${SRCS_2:.c=.o}
+EXEC_2=test_binio
+
+EXECS=$(EXEC_0) $(EXEC_1) $(EXEC_2)
 
 #-------------------------------------------------
 #                     LINKINGS
@@ -32,14 +36,18 @@ $(EXEC_0): $(OBJS_0)
 $(EXEC_1): $(OBJS_1)
 	$(CC) $(CFLAGS) -o $@ $(OBJS_1) $(LDFLAGS) $(LIBRARIES)
 
+$(EXEC_2): $(OBJS_2)
+		$(CC) $(CFLAGS) -o $@ $(OBJS_2) $(LDFLAGS) $(LIBRARIES)
+
 
 #-------------------------------------------------
 #                   DEPENDENCIES
 #-------------------------------------------------
-../src/%.o:
+../src/%.o: ../src/%.c ../include/%.h 
 	make -C ../src $@
 test_dico.o: test_dico.c ../include/dictionnaire.h
 test_r-w_binio.o: test_r-w_binio.c ../include/binio.h
+test_binio.o: test_binio.c ../include/binio.h
 
 #-------------------------------------------------
 #                     CLEANING
@@ -48,8 +56,10 @@ clean_0:
 	@rm -vf $(OBJS_0)
 clean_1:
 	@rm -vf $(OBJS_1)
+clean_2:
+	@rm -vf $(OBJS_2)
 
-clean: clean_0 clean_1
+clean: clean_0 clean_1 clean_2
 
 #-------------------------------------------------
 #                   MRPROPING
@@ -58,8 +68,10 @@ mrproper_0: clean_0
 	@rm -vf $(EXEC_0)
 mrproper_1: clean_1
 	@rm -vf $(EXEC_1)
+mrproper_2: clean_2
+	@rm -vf $(EXEC_2)
 
-mrproper: mrproper_0 mrproper_1
+mrproper: mrproper_0 mrproper_1 mrproper_2
 
 #-------------------------------------------------
 #                      .PHONY
