@@ -43,7 +43,7 @@ $(EXEC_2): $(OBJS_2)
 #-------------------------------------------------
 #                   DEPENDENCIES
 #-------------------------------------------------
-../src/%.o: ../src/%.c ../include/%.h 
+../src/%.o: ../src/%.c ../include/%.h
 	make -C ../src $@
 test_dico.o: test_dico.c ../include/dictionnaire.h
 test_r-w_binio.o: test_r-w_binio.c ../include/binio.h
