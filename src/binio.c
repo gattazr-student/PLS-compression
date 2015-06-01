@@ -132,7 +132,7 @@ int bfeof(FILE* aFile, Buffer* aBuffer, int aBits){
 	if(aFile != NULL && aBuffer != NULL){
 		/* Si fin du fichier et fin du buffer atteint */
 		if( feof(aFile) != 0) {
-			wRestant = aBuffer->longeur - wTraite;
+			wRestant = aBuffer->longeur - wTraite - (8 - aBuffer->significatif);
 			if(wRestant*8 < aBits){
 				return 1;
 			}
