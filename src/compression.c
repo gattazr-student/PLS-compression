@@ -31,6 +31,10 @@ int compression_LZW(FILE* aInput, Buffer* aBufferInput, FILE* aOutput, Buffer* a
 		wMono=bRead(aInput, 8, aBufferInput);
 		/* Réinitialise le dico si on est sur le point de faire un code sur 14 bits */
 		if(isFull()==1 && wLengthBitsToWrite + 1 > 14){
+
+			/* Ecrit le préfixe pour ne pas le perdre à la réinitialisation du dictionnaire */
+			bWrite(aOutput,wLengthBitsToWrite,(Code)wPrefixe, aBufferOutput);
+
 			bWrite(aOutput,wLengthBitsToWrite,(Code)258, aBufferOutput);
 
 			wPrefixe = wMono;
@@ -48,7 +52,8 @@ int compression_LZW(FILE* aInput, Buffer* aBufferInput, FILE* aOutput, Buffer* a
 			}
 
 			bWrite(aOutput,wLengthBitsToWrite,wPrefixe, aBufferOutput);
-			inserer(wPrefixe, wMono);
+			wPrefixe = inserer(wPrefixe, wMono);
+			
 			wPrefixe=wMono;
 		}
 	}

@@ -80,7 +80,8 @@ int decompression_LZW(FILE *aFileIn, Buffer *aBufferIn, FILE *aFileOut, Buffer *
 			bWrite(aFileOut, 8, wString[wI], aBufferOut);
 		}
 
-		wPrefix = inserer(wPrefix, wString[0]);
+		wPrefix = inserer(wPrefix, (unsigned char)wString[0]);
+		
 
 		/* Ecris aussi wString[0] si necessaire */
 		if(wMonoExist != 0){
