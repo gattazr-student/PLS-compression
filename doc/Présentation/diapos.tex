@@ -3,18 +3,45 @@
 \usepackage[frenchb]{babel}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{lmodern}
+\usepackage{textcomp}
 
 \definecolor{vertmoyen}{rgb}{0.25,0.45,0.10}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+    showstringspaces=false,
+    breaklines=true,
+    frameround=ffff,
+    language=C,
+    backgroundcolor=\color{white},
+    commentstyle=\color{mygreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{mygray},
+    rulecolor=\color{black},
+    stringstyle=\color{mymauve},
+    basicstyle=\ttfamily,
+    stringstyle=\ttfamily,
+    extendedchars=true,
+    literate={é}{{\'e}}1 {è}{{\`e}}1 {à}{{\`a}}1 {ç}{{\c{c}}}1 {œ}{{\oe}}1 {ù}{{\`u}}1 {É}{{\'E}}1
+    {È}{{\`E}}1 {À}{{\`A}}1 {Ç}{{\c{C}}}1 {Œ}{{\OE}}1 {Ê}{{\^E}}1 {ê}{{\^e}}1 {î}{{\^i}}1
+    {ô}{{\^o}}1 {û}{{\^u}}1
+}
 
 
 \usetheme{Berlin}
-
+% \setbeamerfont*{subsection in head/foot}{size=\huge}
+\setbeamerfont*{section in head/foot}{size=\tiny}
+\setbeamerfont*{subsection in head/foot}{size=\huge}
+\setbeamerfont{headline}{size=\huge}
 \setbeamercolor{structure}{fg=vertmoyen}
 \setbeamertemplate{itemize item}[circle]
 
-\setbeamertemplate{navigation symbols}{%
-\hyperlink{sommaire}{\beamerreturnbutton{sommaire}}  
-}
+
 
 \title{
     Projet Système\\
@@ -30,7 +57,7 @@
 \maketitle
 \end{frame}
 
-\begin{frame}
+\begin{frame}{sommaire}
 \tableofcontents
 \end{frame}
 
@@ -70,40 +97,55 @@
  \end{enumerate}
 \end{frame}
 
-\begin{frame}
- struct\_arbre $\{$ \newline
-	char valeur; \newline
-	Arbre* enfant; \newline
-	Arbre* frere; \newline
-	Arbre* parent; \newline
-	Code code; \newline
-$\};$
-\end{frame}
-\begin{frame}
+\begin{frame}[containsverbatim]
+\begin{columns}[t]
+  \begin{column}{5cm}
+  \begin{block}{Abre}
+    \begin{lstlisting}
+typedef struct _arbre {
+  char valeur;
+  Arbre* enfant;
+  Arbre* frere;
+  Arbre* parent;
+  Code code;
+} Arbre;
+    \end{lstlisting}
+  \end{block}
+  \end{column}
 
-struct\_dict $\{$ \newline
-	int nbElements;	\newline	
-	int tailleDico;	\newline	
-	Arbre** ids;	\newline	
-	Arbre* dico;	\newline	
-$\};$
-
+  \begin{column}{5cm}
+  \begin{block}{Dict}
+    \begin{lstlisting}
+typedef struct _dict {
+  int nbElements;
+  int tailleDico;
+  Arbre** ids;
+  Arbre* dico;
+} Dict;
+    \end{lstlisting}
+  \end{block}
+  \end{column}
+ \end{columns}
 \end{frame}
 
 
 \subsection{Binio}
-\begin{frame}
+\begin{frame}[containsverbatim]
  binio -> traitement des fichiers\newline
  \newline
- Utilisation d'un buffer :\newline
- \newline
- typedef struct s\_buffer $\{$ \newline
-	char* content; \newline
-	char* courant; \newline
-	int significatif; \newline
-	int longeur; \newline
-$\}$ Buffer;
- 
+ Utilisation d'un buffer :
+ \begin{block}{Buffer}
+    \begin{lstlisting}
+typedef struct s_buffer {
+  char* content;
+  char* courant;
+  int significatif;
+  int longeur;
+} Buffer;
+    \end{lstlisting}
+  \end{block}
+
+
 \end{frame}
 
 
