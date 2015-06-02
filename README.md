@@ -6,7 +6,7 @@ Structures de données :
 
 ### Dictionnaire :
 - **int** nbElements : nombre d'élements présents dans le dictionnaire
-- **int** tailleDico : dernier élément du dictionnaire dans lequel on peut écrire 
+- **int** tailleDico : dernier élément du dictionnaire dans lequel on peut écrire
 - **Arbre**** ids : Tableau de pointeur sur Arbre
 - **Arbre*** dico : Tableau d'arbres (1er étage)
 
@@ -38,21 +38,25 @@ LZW
 │   ├── compression.h
 │   ├── decompression.h
 │   ├── dictionnaire.h
-│   └── main.h
+│   ├── main.h
+│   └── rle.h
 ├── src
 │   ├── Makefile
 │   ├── binio.c
 │   ├── compression.c
 │   ├── decompression.c
 │   ├── dictionnaire.c
-│   └── main.c
+│   ├── main.c
+│   └── rle.c
 ├── tests
 │   ├── data
-│   │   ├── test1
-│   │   └── test2
+│   │   ├── example.txt
+│   │   └── blanc.bmp
 │   ├── Makefile
+│   ├── test_binio.c
 │   ├── test_dico.c
 │   ├── test_r-w_binio.c
+│   ├── test_rle.c
 
 ```
 
@@ -66,7 +70,7 @@ Convention de nommage :
 Module dictionnaire :
 ---------------------
 
-### Fonctions : 
+### Fonctions :
 
 - **initialiser** : initialise dico avec les 255 monoséquences, alloue la mémoire pour ids et initialise nbElements à 258 (255+3 "spéciaux")
 - **inserer** :  insère le Code correspondant au code "aPrefixe.aMono" dans le dictionnaire en doublant la taille de ids si nécessaire
@@ -82,11 +86,11 @@ Module dictionnaire :
 Module binio :
 ---------------------
 
-### Fonctions : 
+### Fonctions :
 
 - **bOpen** : Ouvre un fichier en mode binaire.
 - **bMakeBuffer** : Créer un buffer pour la lecture ou l'écriture d'un fichier.
-- **bRead** : Lit un nombre spécifique de bits dans le fichier de lecture et retourne sa valeur entière. 
+- **bRead** : Lit un nombre spécifique de bits dans le fichier de lecture et retourne sa valeur entière.
 - **bWrite** : Ecrit un code dans le fichier d'écriture en mode binaire.
 - **bFlush** : Ecrit le maximum d'octets contenus dans le buffer d'écriture dans le fichier associé.
 - **bFlush_Force** : Ecrit tout le contenu du buffer d'écriture dans le fichier associé.
@@ -97,7 +101,7 @@ Module binio :
 Module RLE :
 ---------------------
 
-### Fonctions : 
+### Fonctions :
 
 - **coderRle** : permet de pré-traiter le fichier donné avec un codage RLE
 - **decoderRle** : permet de décoder un fichier pré-traité par RLE
