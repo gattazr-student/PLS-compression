@@ -82,6 +82,18 @@ Module dictionnaire :
 Module binio :
 ---------------------
 
+### Fonctions : 
+
+- **bOpen** : Ouvre un fichier en mode binaire.
+- **bMakeBuffer** : Créer un buffer pour la lecture ou l'écriture d'un fichier.
+- **bRead** : Lit un nombre spécifique de bits dans le fichier de lecture et retourne sa valeur entière. 
+- **bWrite** : Ecrit un code dans le fichier d'écriture en mode binaire.
+- **bFlush** : Ecrit le maximum d'octets contenus dans le buffer d'écriture dans le fichier associé.
+- **bFlush_Force** : Ecrit tout le contenu du buffer d'écriture dans le fichier associé.
+- **bClose** : Vide le buffer d'écriture et ferme le fichier associé.
+- **bCloseBuffer** : Ferme le buffer.
+- **bfeof** : Indique si la fin de fichier est atteinte et que le buffer est vide.
+
 Module RLE :
 ---------------------
 
