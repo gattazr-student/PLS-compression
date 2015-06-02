@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <rle.h>
 
 /*
@@ -13,11 +14,10 @@ void coderRle(FILE* aFilein, FILE* aFileout){
 	unsigned char i = 1;
 	int wC;
 	int wCcourant;
-	
+
 	wCcourant = fgetc(aFilein);
 	wC = fgetc(aFilein);
-	fprintf(stderr, "%d\n", wC);
-	
+
 	while (!feof(aFilein)) {
 		if(wEtat == 1){
 			if(wC == wCcourant){
@@ -34,10 +34,10 @@ void coderRle(FILE* aFilein, FILE* aFileout){
 				i++;
 				if(i == 255){
 					fputc(i, aFileout);
-					fputc(wCcourant, aFileout);	
+					fputc(wCcourant, aFileout);
 					i = 1;
-					wEtat = 1;	
-				}		
+					wEtat = 1;
+				}
 			}
 			else{
 				fputc(i, aFileout);
@@ -48,7 +48,6 @@ void coderRle(FILE* aFilein, FILE* aFileout){
 		}
 		wCcourant = wC;
 		wC = fgetc(aFilein);
-		fprintf(stderr, "%d\n", wC);
 		if(feof(aFilein)){
 			fputc(i, aFileout);
 			fputc(wCcourant, aFileout);
@@ -69,14 +68,13 @@ void decoderRle(FILE* aFilein, FILE* aFileout){
 	int wJ;
 	int wC;
 	int wCcourant;
-	
+
 	while (!feof(aFilein)) {
 		wCcourant = fgetc(aFilein);
 		wC = fgetc(aFilein);
-		
+
 		for(wJ=0; wJ<wCcourant; wJ++){
 			fputc(wC, aFileout);
 		}
 	}
 }
-

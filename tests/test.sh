@@ -18,18 +18,16 @@ if [ $? -ne 0 ]; then
 fi
 
 # Compresse
-
 echo "Compression: $EXEC -c$1 > $OUTPUT_DIR$FILE_NAME.lzw 2> $OUTPUT_DIR${FILE_NAME}_compress.log"
 $EXEC -c$1 > $OUTPUT_DIR$FILE_NAME.lzw 2> $OUTPUT_DIR${FILE_NAME}_compress.log
 if [ $? -ne 0 ]; then
 	echo "La compression du fichier n'a pas fonctionné correctement"
 	exit 1
 fi
+
 # Décompresse
 echo "Décompression: $EXEC -d$OUTPUT_DIR$FILE_NAME.lzw > $OUTPUT_DIR$FILE_NAME.$EXTENSION 2> $OUTPUT_DIR${FILE_NAME}_decompress.log"
 $EXEC -d$OUTPUT_DIR$FILE_NAME.lzw > $OUTPUT_DIR$FILE_NAME.$EXTENSION 2> $OUTPUT_DIR${FILE_NAME}_decompress.log
-
-
 if [ $? -ne 0 ]; then
 	echo "La décompression du fichier n'a pas fonctionné correctement"
 	exit 1

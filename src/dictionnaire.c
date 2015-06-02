@@ -60,8 +60,14 @@ Code inserer (Code aPrefixe, Code aMono){
 	Arbre * aParent = NULL;
 	Arbre * aNew = NULL;
 	Arbre ** aTmp = NULL;
-	int i = 0;
+	int i;
 	int wExist;
+	#ifdef DEBUG_DICO
+		char *wSequence;
+		int wSeqLength;
+		int wI;
+	#endif
+	i = 0;
 
 	/* Cas où le code de aPrefixe.aMono existe déjà -> on retourne le code existant */
 	wExist = existe_seq(aPrefixe, aMono, &aCode);
@@ -118,7 +124,13 @@ Code inserer (Code aPrefixe, Code aMono){
 	aNew->code = i;
 
 	#ifdef DEBUG_DICO
-		fprintf(stderr, "Add (%d.%d) = %d\n", aPrefixe, aMono, i);
+		wSequence = codeVersSequence(i, &wSeqLength);
+		fprintf(stderr, "Add (%d.%d) : %d = ", aPrefixe, aMono, i);
+		for(wI = 0; wI < wSeqLength; wI++){
+			fprintf(stderr, "%c", wSequence[wI]);
+		}
+		fprintf(stderr, "\n");
+		free(wSequence);
 	#endif
 
 	return i;

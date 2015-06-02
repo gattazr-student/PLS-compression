@@ -225,7 +225,7 @@ Code bRead(FILE* aFile, int aBits, Buffer* aBuffer){
 	}
 
 	#ifdef DEBUG_BINIO
-		fprintf(stderr, "%d : %d\n", wResult, aBits);
+		fprintf(stderr, "Read(%d) : %d\n", aBits, wResult);
 	#endif
 
 	return wResult;
@@ -295,7 +295,7 @@ void bWrite(FILE* aFile, int aBits, Code aCode, Buffer* aBuffer){
 	}
 
 	#ifdef DEBUG_BINIO
-		fprintf(stderr, "%d : %d\n", aCode, aBits);
+		fprintf(stderr, "Write(%d) : %d\n", aBits, aCode);
 	#endif
 }
 

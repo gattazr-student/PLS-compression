@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <binio.h>
-
 /*
 * Coder RLE
 * Permet de pré traiter le fichier avec un codage RLE
