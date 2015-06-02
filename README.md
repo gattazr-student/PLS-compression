@@ -93,8 +93,8 @@ Module RLE :
 Le codage se fait avec un automate à 2 états. On compare à chaque fois l'élément courant à l'élément précédent : si les deux sont égaux, on passe dans l'état 2 en incrémentant un compteur.
 Le résultat du codage est de la forme suivante :
 	abbbbcddddd -> 1a4b1c5d
-Ainsi, pour un fichier où il y a peu de redondance, nous ajoutons un "1" devant chaque élément -> 
-Paquets max de 255
+Ainsi, pour un fichier où il y a peu de redondance, nous ajoutons un "1" devant chaque élément -> la taille du fichier va donc doubler...
+Nous avons choisi de faire des paquets de 255 maximum.
 
 
 Difficultés rencontrées :
