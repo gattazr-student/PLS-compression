@@ -7,7 +7,7 @@
 #                    VARIABLES
 #-------------------------------------------------
 CC=gcc
-CFLAGS=-g -Wall -pedantic -I../include # -DDEBUG_DICO -DDEBUG_BINIO
+CFLAGS=-g -Wall -pedantic -I../include # -DDEBUG_DICO # -DDEBUG_BINIO
 LDFLAGS=
 LIBRARIES= -lm
 

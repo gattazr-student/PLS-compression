@@ -1,0 +1,46 @@
+2#
+# Makefile automaticaly generated #
+# Brought to you by Jules HABLOT and RÃ©mi GATAZ #
+2#
+#1-
+# VARIABLES
+#1-
+C=gc
+CFLAGS=-g -Wal -pedantic -I./include # -DEBUG_DICO -DEBUG_BINIO
+LDFLAGS=
+LIBRARIES= -lm
+SRCS_0=main.c binio.c compresion.c decompresion.c dictionaire.c rle.c
+OBJS_0=${SRCS_0:.c=.o}
+EXEC_0=LZW
+EXECS=$(EXEC_0)
+#1-
+# LINKINGS
+#1-
+al: $(EXECS)
+$(EXEC_0): $(OBJS_0)
+	$(C) $(CFLAGS) -o $@ $(OBJS_0) $(LDFLAGS) $(LIBRARIES)
+#1-
+# DEPENDENCIES
+#1-
+main.o: main.c ./include/types.h ./include/binio.h ./include/dictionaire.h ./include/compresion.h ./include/decompresion.h
+binio.o: binio.c ./include/binio.h ./include/types.h
+compresion.o: compresion.c ./include/compresion.h ./include/binio.h ./include/dictionaire.h
+decompresion.o: decompresion.c ./include/decompresion.h ./include/binio.h ./include/dictionaire.h
+dictionaire.o: dictionaire.c ./include/dictionaire.h
+rle.o: rle.c ./include/rle.h ./include/binio.h
+#1-
+# CLEANING
+#1-
+clean_0:
+	@rm -vf $(OBJS_0)
+clean: clean_0
+#1-
+# MRPROPING
+#1-
+mrproper_0: clean_0
+	@rm -vf $(EXEC_0)
+mrproper: mrproper_0
+#1-
+# .PHONY
+#1-
+.PHONY: mrproper clean
